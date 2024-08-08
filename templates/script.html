@@ -1,0 +1,47 @@
+ {% load static %}
+ <!-- JavaScript Libraries -->
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+ <script src={% static "lib/easing/easing.min.js" %}></script>
+ <script src={% static "lib/waypoints/waypoints.min.js" %}></script>
+ <script src={% static "lib/lightbox/js/lightbox.min.js" %}></script>
+ <script src={% static "lib/owlcarousel/owl.carousel.min.js" %}></script>
+
+ <!-- Template Javascript -->
+ <script src={% static "js/main.js" %}></script>
+ <script>
+
+    {% comment %} for scrolling to product from banner  {% endcomment %}
+    function scrollToOrganicProducts() {
+        document.getElementById('organic-products').scrollIntoView({ behavior: 'smooth' });
+    }
+    function scrollToVegatableProducts() {
+        document.getElementById('vegetable-products').scrollIntoView({ behavior: 'smooth' });
+    }
+    {% comment %} for selecting  stars for testimonial {% endcomment %}
+        document.querySelectorAll('.fa-star').forEach(star => {
+            star.addEventListener('click', function() {
+                let selectedValue = parseInt(this.getAttribute('data-value'));
+                document.querySelectorAll('.fa-star').forEach(star => {
+                    let starValue = parseInt(star.getAttribute('data-value'));
+                    if (starValue <= selectedValue) {
+                        star.classList.add('text-warning');
+                        star.classList.remove('text-muted');
+                    } else {
+                        star.classList.add('text-muted');
+                        star.classList.remove('text-warning');
+                    }
+                });
+                document.getElementById('rating').value = selectedValue;
+                document.querySelectorAll('input[name="rating_star"]').forEach(checkbox => {
+                    checkbox.checked = parseInt(checkbox.value) === selectedValue;
+                });
+            });
+        });
+    
+        function submitRating() {
+            const rating = document.getElementById('rating').value;
+            console.log('Selected Rating:', rating); // Replace this with actual form submission code
+        }
+  
+</script>

@@ -1,0 +1,348 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<!-- Hero Start -->
+<div class="container-fluid py-5 mb-5 hero-header">
+    <div class="container py-5">
+        <div class="row g-5 align-items-center">
+            <div class="col-md-12 col-lg-7">
+                <h4 class="mb-3 text-secondary">100% Organic Foods</h4>
+                <h1 class="mb-5 display-3 text-primary">Organic Veggies & Fruits Foods</h1>
+            </div>
+            <div class="col-md-12 col-lg-5">
+                <div id="carouselId" class="carousel slide position-relative" data-bs-ride="carousel">
+                    <div class="carousel-inner" role="listbox">
+                        <div class="carousel-item active rounded">
+                            <img src="{% static 'img/hero-img-1.png' %}" class="img-fluid w-100 h-100 bg-secondary rounded" alt="First slide">
+                            <a href="#" class="btn px-4 py-2 text-white rounded" onclick="scrollToOrganicProducts()">Fruits</a>
+                        </div>
+                        <div class="carousel-item rounded">
+                            <img src="{% static 'img/hero-img-2.jpg' %}" class="img-fluid w-100 h-100 rounded" alt="Second slide">
+                            <a href="#" class="btn px-4 py-2 text-white rounded" onclick="scrollToVegatableProducts()">Vegetables</a>
+                        </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselId" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselId" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Hero End -->
+
+
+
+<!-- Featurs Section Start -->
+<div class="container-fluid featurs py-5">
+    <div class="container py-5">
+        <div class="row g-4">
+            {% for feature in features %}
+            <div class="col-md-6 col-lg-3">
+                <div class="featurs-item text-center rounded bg-light p-4">
+                    <div class="featurs-icon btn-square rounded-circle bg-secondary mb-5 mx-auto">
+                        <i class="fas fa-{{ feature.icon}}-alt fa-3x text-white"></i>
+                    </div>
+                    <div class="featurs-content text-center">
+                        <h5> {{feature.title}} </h5>
+                        <p class="mb-0">{{ feature.description }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<!-- Featurs Section End -->
+
+
+<!-- Fruits Shop Start-->
+<div class="container-fluid fruite py-5" id="organic-products">
+    <div class="container py-5">
+        <div class="tab-class text-center">
+            <div class="row g-4">
+                <div class="col-lg-4 text-start">
+                    <h1>Organic Products</h1>
+                </div>
+                <div class="col-lg-8 text-end">
+                    <ul class="nav nav-pills d-inline-flex text-center mb-5">
+                        <li class="nav-item">
+                            <a class="d-flex m-2 py-2 bg-light rounded-pill {% if category == 'all' %}active{% endif %}" data-bs-toggle="pill" href="#tab-1" onclick="window.location.href='?category=all'">
+                                <span class="text-dark" style="width: 130px;">All Products</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="d-flex py-2 m-2 bg-light rounded-pill {% if category == 'VEG' %}active{% endif %}" data-bs-toggle="pill" href="#tab-2" onclick="window.location.href='?category=VEG'">
+                                <span class="text-dark" style="width: 130px;">Vegetables</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="d-flex m-2 py-2 bg-light rounded-pill {% if category == 'FRUIT' %}active{% endif %}" data-bs-toggle="pill" href="#tab-3" onclick="window.location.href='?category=FRUIT'">
+                                <span class="text-dark" style="width: 130px;">Fruits</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="tab-content">
+                <div id="tab-1" class="tab-pane fade show p-0 {% if category == 'all' %}active{% endif %}">
+                    <div class="row g-4">
+                        {% for product in products %}
+                        <div class="col-md-6 col-lg-4 col-xl-3">
+                            <div class="rounded position-relative fruite-item" style="display: flex; flex-direction: column; height: 100%; max-height: 400px;">
+                                <a href="{% url 'product-detail' product.product_id %}">
+                                <div class="fruite-img" style="width: 100%; height: 190px; overflow: hidden; flex-shrink: 0;">
+                                    <img src="{{ product.image.url }}" style="width: 100%; height: 100%; object-fit: cover;" alt="{{ product.name }}">
+                                </div>
+                                <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">{{ product.get_category_display }}</div>
+                                <div class="p-4 border border-secondary border-top-0 rounded-bottom" style="flex-grow: 1; display: flex; flex-direction: column;">
+                                    <h4 style="margin: 2; font-size: 1.2rem;">{{ product.name }}</h4>
+                                    <p style="margin: 2; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.2em; max-height: 2.4em;">
+                                        {{ product.description }}
+                                    </p>
+                                    <div class="d-flex justify-content-center align-items-center flex-lg-wrap">
+                                        <p class="text-dark fs-5 fw-bold mb-0 me-1">${{ product.price }} / kg</p>
+                                        <a href="#" class="btn border border-secondary rounded-pill py-2 px-5 text-primary mt-2">
+                                            <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                    </div>                                    
+                                </div>
+                            </div>
+                            </a>
+                        </div>
+                        {% empty %}
+                        <p>No products available.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div id="tab-2" class="tab-pane fade show p-0 {% if category == 'VEG' %}active{% endif %}">
+                    <div class="row g-4">
+                        {% for product in products %}
+                        <div class="col-md-6 col-lg-4 col-xl-3">
+                            <div class="rounded position-relative fruite-item" style="display: flex; flex-direction: column; height: 100%; max-height: 400px;">
+                                <a href="{% url 'product-detail' product.product_id %}">
+                                <div class="fruite-img" style="width: 100%; height: 190px; overflow: hidden; flex-shrink: 0;">
+                                    <img src="{{ product.image.url }}" style="width: 100%; height: 100%; object-fit: cover;" alt="{{ product.name }}">
+                                </div>
+                                <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">{{ product.get_category_display }}</div>
+                                <div class="p-4 border border-secondary border-top-0 rounded-bottom" style="flex-grow: 1; display: flex; flex-direction: column;">
+                                    <h4 style="margin: 2; font-size: 1.2rem;">{{ product.name }}</h4>
+                                    <p style="margin: 2; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.2em; max-height: 2.4em;">
+                                        {{ product.description }}
+                                    </p>
+                                    <div class="d-flex justify-content-center align-items-center flex-lg-wrap">
+                                        <p class="text-dark fs-5 fw-bold mb-0 me-1">${{ product.price }} / kg</p>
+                                        <a href="#" class="btn border border-secondary rounded-pill py-2 px-5 text-primary mt-2">
+                                            <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
+                                        </a>
+                                    </div>                                    
+                                </div>
+                                </a>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p>No vegetables available.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div id="tab-3" class="tab-pane fade show p-0 {% if category == 'FRUIT' %}active{% endif %}">
+                    <div class="row g-4">
+                        {% for product in products %}
+                        <div class="col-md-6 col-lg-4 col-xl-3">
+                            <div class="rounded position-relative fruite-item" style="display: flex; flex-direction: column; height: 100%; max-height: 400px;">
+                                <a href="{% url 'product-detail' product.product_id %}">
+                                <div class="fruite-img" style="width: 100%; height: 190px; overflow: hidden; flex-shrink: 0;">
+                                    <img src="{{ product.image.url }}" style="width: 100%; height: 100%; object-fit: cover;" alt="{{ product.name }}">
+                                </div>
+                                <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">{{ product.get_category_display }}</div>
+                                <div class="p-4 border border-secondary border-top-0 rounded-bottom" style="flex-grow: 1; display: flex; flex-direction: column;">
+                                    <h4 style="margin: 2; font-size: 1.2rem;">{{ product.name }}</h4>
+                                    <p style="margin: 2; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.2em; max-height: 2.4em;">
+                                        {{ product.description }}
+                                    </p>
+                                    <div class="d-flex justify-content-center align-items-center flex-lg-wrap">
+                                        <p class="text-dark fs-5 fw-bold mb-0 me-1">${{ product.price }} / kg</p>
+                                        <a href="#" class="btn border border-secondary rounded-pill py-2 px-5 text-primary mt-2">
+                                            <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
+                                        </a>
+                                    </div>                                    
+                                </div>
+                                </a>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <h1>No fruits available.</h1>
+                        {% endfor %}
+                    </div>
+                </div>                     
+            </div>
+        </div>      
+    </div>
+</div>
+<!-- Fruits Shop End-->
+
+
+<!-- Discounts Start -->
+<div class="container-fluid service py-5">
+    <div class="container py-5">
+        <div class="row g-4 justify-content-center">
+            {% for discount in discounts %}
+            <div class="col-md-6 col-lg-4">
+                <a href={% url 'fruits'%}>
+                    <div class="service-item bg-secondary rounded border border-primary">
+                        <img src={{ discount.image.url }} class="img-fluid rounded-top w-100" alt="">
+                        <div class="px-4 rounded-bottom">
+                            <div class="service-content bg-primary text-center p-4 rounded">
+                                <h5 class="text-white">{{ discount.title }}</h5>
+                                <h3 class="mb-0">{{ discount.description }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<!-- Discounts End -->
+
+
+<!-- Vegetable Shop Start-->
+<div class="container-fluid vesitable py-5" id="vegetable-products">
+    <div class="container py-5">
+        <h1 class="mb-0">Fresh Vegetables</h1>
+        <div class="owl-carousel vegetable-carousel justify-content-center">
+            {% for product in products %}
+            {% if product.category == 'VEG' %}
+            <div class="border border-primary rounded position-relative vesitable-item" style="width: 280px; margin: 0 10px;">
+                <a href="{% url 'product-detail' product.product_id %}">
+                    <div class="vesitable-img" style="width: 100%; height: 200px; overflow: hidden; flex-shrink: 0;">
+                        <img src="{{ product.image.url }}" class="img-fluid w-100 rounded-top" alt="" style="height: 100%; object-fit: cover;">
+                    </div>
+                    <div class="text-white bg-primary px-3 py-1 rounded position-absolute" style="top: 10px; right: 10px;">Vegetable</div>
+                    <div class="p-4 rounded-bottom" style="height: 220px; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <h4 style="font-size: 1.25rem; margin-bottom: 0.5rem;">{{ product.name }}</h4>
+                            <p style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; margin-bottom: 0.5rem;">{{ product.description }}</p>
+                        </div>
+                        <div class="d-flex flex-column align-items-center">
+                            <p class="text-dark fs-5 fw-bold mb-2">${{ product.price }}</p>
+                            <a href="#" class="btn border border-secondary rounded-pill py-1 px-4 text-primary mt-2">
+                                <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                        </div> 
+                    </div>
+                </a>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<!-- Vegetable Shop End -->
+
+
+
+
+<!-- Banner Section Start-->
+<div class="container-fluid banner bg-secondary my-5">
+    <div class="container py-5">
+        {% for banner in banners %}
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-6">
+                <div class="py-4">
+                    <h1 class="display-3 text-white">{{ banner.title }}</h1>
+                    <p class="mb-4 text-dark">{{ banner.description }}</p>
+                    <a href={% url 'fruits' %} class="banner-btn btn border-2 border-white rounded-pill text-dark py-3 px-5">BUY</a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="position-relative">
+                    <img src={{ banner.image.url }} class="img-fluid w-100 rounded" alt="">
+                    <div class="d-flex align-items-center justify-content-center bg-white rounded-circle position-absolute" style="width: 140px; height: 140px; top: 0; left: 0;">
+                        <h1 style="font-size: 100px;">{{ banner.quantity }}</h1>
+                        <div class="d-flex flex-column">
+                            <span class="h2 mb-0">{{ banner.price }}$</span>
+                            <span class="h4 text-muted mb-0">kg</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<!-- Banner Section End -->
+
+
+
+<!-- Fact Start -->
+<div class="container-fluid py-5">
+    <div class="container">
+        <div class="bg-light p-5 rounded">
+            <div class="row g-4 justify-content-center">
+                {% for fact in facts %}
+                <div class="col-md-6 col-lg-6 col-xl-3">
+                    <div class="counter bg-white rounded p-5">
+                        <i class="fa fa-{{ fact.icon }} text-secondary"></i>
+                        <h4>{{ fact.title }}</h4>
+                        <h1>{{ fact.information }}</h1>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Fact Start -->
+
+
+<!-- Testimonial Start -->
+<div class="container-fluid testimonial py-5">
+    <div class="container py-5">
+        <div class="testimonial-header text-center">
+            <h4 class="text-primary">Our Testimonials</h4>
+            <h1 class="display-5 mb-5 text-dark">What Our Clients Say!</h1>
+        </div>
+        <!-- Carousel container -->
+        <div class="owl-carousel testimonial-carousel">
+            {% for review in reviews %}
+            <!-- Each testimonial item -->
+            <div class="testimonial-item img-border-radius bg-light rounded p-4" style="height: 280px;">
+                <div class="position-relative h-100">
+                    <i class="fa fa-quote-right fa-2x text-secondary position-absolute" style="bottom: 30px; right: 0;"></i>
+                    <div class="mb-4 pb-4 border-bottom border-secondary" style="height: 120px; overflow: hidden;">
+                        <p class="mb-0" style="height: 100%; overflow-y: auto;">{{ review.review }}</p>
+                    </div>
+                    <div class="d-flex align-items-center flex-nowrap">
+                        {% if review.image %}
+                        <div class="bg-secondary rounded">
+                            <img src="{{ review.image.url }}" class="img-fluid rounded" style="width: 100px; height: 100px;" alt="">
+                        </div>
+                        {% endif %}
+                        <div class="ms-4 d-block">
+                            <h4 class="text-dark">{{ review.name }}</h4>
+                            <p class="m-0 pb-3">{{ review.email }}</p>
+                            <div class="d-flex pe-5">
+                                <!-- Iterate over a fixed range of stars -->
+                                {% for star in "12345" %}
+                                <i class="fas fa-star {% if forloop.counter <= review.rating %}text-primary{% endif %}"></i>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<!-- Testimonial End -->
+
+
+ 
+{% endblock %}

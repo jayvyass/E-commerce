@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<!-- Single Product Start -->
+<div class="container-fluid py-5 mt-5">
+    <div class="container py-5">
+        <div class="row g-4 mb-5">
+            <div class="col-lg-8 col-xl-9">
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="border rounded">
+                            <a href="#">
+                                <img src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.name }}" style="width: 100%; height: auto; max-height: 400px; object-fit: cover;">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 mt-7">
+                        <h4 class="fw-bold mb-3" style="margin-top: 20px;">{{ product.name }}</h4>
+                        <p class="mb-3">Category: {{ product.get_category_display }}</p>
+                        <h5 class="fw-bold mb-3">${{ product.price }}</h5>
+                        
+                        <p class="mb-4">{{ product.description }}</p>
+                        <div class="input-group quantity mb-5" style="width: 100px;">
+                            <div class="input-group-btn">
+                                <button class="btn btn-sm btn-minus rounded-circle bg-light border" >
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                            </div>
+                            <input type="text" class="form-control form-control-sm text-center border-0" value="1">
+                            <div class="input-group-btn">
+                                <button class="btn btn-sm btn-plus rounded-circle bg-light border">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <a href="#" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                    </div>
+                    <div class="col-lg-12">
+                        <nav>
+                            <div class="nav nav-tabs mb-3">
+                                <button class="nav-link active border-white border-bottom-0" type="button" role="tab"
+                                    id="nav-about-tab" data-bs-toggle="tab" data-bs-target="#nav-about"
+                                    aria-controls="nav-about" aria-selected="true">Description</button>
+                                <button class="nav-link border-white border-bottom-0" type="button" role="tab"
+                                    id="nav-mission-tab" data-bs-toggle="tab" data-bs-target="#nav-mission"
+                                    aria-controls="nav-mission" aria-selected="false">Reviews</button>
+                            </div>
+                        </nav>
+                        <div class="tab-content mb-5">
+                            <div class="tab-pane active" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
+                                <p>At FruitAble, we prioritize sustainability and health, offering a wide variety of seasonal and nutrient-rich options to support your healthy lifestyle.</p>
+                                <p> Enjoy the convenience of shopping with us and experience the taste of nature's bounty with every bite.</p>
+                                <div class="px-2">
+                                    <div class="row g-4">
+                                        <div class="col-6">
+                                            <div class="row bg-light align-items-center text-center justify-content-center py-2">
+                                                <div class="col-6">
+                                                    <p class="mb-0">Weight</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <p class="mb-0">1 kg</p>
+                                                </div>
+                                            </div>
+                                            <div class="row text-center align-items-center justify-content-center py-2">
+                                                <div class="col-6">
+                                                    <p class="mb-0">Country of Origin</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <p class="mb-0">Agro Farm</p>
+                                                </div>
+                                            </div>
+                                            <div class="row bg-light text-center align-items-center justify-content-center py-2">
+                                                <div class="col-6">
+                                                    <p class="mb-0">Quality</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <p class="mb-0">Organic</p>
+                                                </div>
+                                            </div>
+                                            <div class="row text-center align-items-center justify-content-center py-2">
+                                                <div class="col-6">
+                                                    <p class="mb-0">Сheck</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <p class="mb-0">Healthy</p>
+                                                </div>
+                                            </div>                                        
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="nav-mission" role="tabpanel" aria-labelledby="nav-mission-tab">
+                               {% for review in reviews %}
+                                <div class="d-flex">
+                                    {% comment %} <img src="img/avatar.jpg" class="img-fluid rounded-circle p-3" style="width: 100px; height: 100px;" alt=""> {% endcomment %}
+                                    <div class="">
+                                        {% comment %} <p class="mb-2" style="font-size: 14px;">April 12, 2024</p> {% endcomment %}
+                                        <div class="d-flex justify-content-between">
+                                            <h5>{{ review.name }}</h5>
+                                            <div class="d-flex mb-3">
+                                                {% for star in "12345" %}
+                                                <i class="fas fa-star {% if forloop.counter <= review.rating %}text-primary{% endif %}"></i>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        <p>{{  review.review }} </p>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <div class="tab-pane" id="nav-vision" role="tabpanel">
+                                <p class="text-dark">Tempor erat elitr rebum at clita. Diam dolor diam ipsum et tempor sit. Aliqu diam
+                                    amet diam et eos labore. 3</p>
+                                <p class="mb-0">Diam dolor diam ipsum et tempor sit. Aliqu diam amet diam et eos labore.
+                                    Clita erat ipsum et lorem et sit</p>
+                            </div>
+                        </div>
+                    </div>
+                    <form method="post" action="{% url 'product-detail' product.product_id %}">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <div class="row g-4">
+                            <div class="col-lg-12">
+                                <div class="d-flex justify-content-between py-3 mb-5">
+                                    <div class="d-flex align-items-center">
+                                        <p class="mb-0 me-3">Please rate:</p>
+                                        <div class="d-flex align-items-center" style="font-size: 12px;">
+                                            <!-- Rating stars as checkboxes -->
+                                            {% for i in "12345" %}
+                                                <input type="radio" id="star{{ i }}" name="rating" value="{{ i }}" class="d-none">
+                                                <label for="star{{ i }}" class="me-1" style="cursor: pointer;">
+                                                    <i class="fa fa-star" data-value="{{ i }}"></i>
+                                                </label>
+                                            {% endfor %}
+                                        </div>                                        
+                                    </div>
+                                    <button type="submit" class="btn border border-secondary text-primary rounded-pill px-4 py-3">Post Comment</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>                 
+                </div>
+            </div>
+            
+
+        <h1 class="fw-bold mb-0">Related products</h1>
+       
+        <!-- Related Products -->
+        <div class="col-md-12">
+            <h3>Related Products</h3>
+            <div class="row no-gutters fruite">
+                {% for related_product in related_products %}
+                <div class="col-md-3 fruite-item mb-3">
+                    <div class="card fruite-img" style="width: 100%; height: 350px;">
+                        <img src="{{ related_product.image.url }}" class="fruite-img" alt="{{ related_product.name }}" style="width: 100%; height: 190px; overflow: hidden; flex-shrink: 0;">
+                        <div class="card-body" style="height: 120px;">
+                            <h5 class="card-title" style="font-size: 1.25rem; margin-top: 17px;">{{ related_product.name }}</h5>
+                            <p class="card-text" style="font-size: 0.875rem; color: #6c757d; margin-bottom: 2px; height: 20px; overflow: hidden;">${{ related_product.price }} / kg</p>
+                            <a href="{% url 'product-detail' related_product.product_id %}" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p>No related products available.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
