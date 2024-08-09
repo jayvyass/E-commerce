@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Contact, Organic_Product , Feature , Discount , Facts , Banner , Testimonial
+from .models import CartItem, Contact, Organic_Product , Feature , Discount , Facts , Banner , Testimonial
 
 # Registering Contact model
 @admin.register(Contact)
@@ -31,4 +31,8 @@ class BannerAdmin(admin.ModelAdmin):
 
 @admin.register(Testimonial)
 class TestimonialAdmin(admin.ModelAdmin):
-    list_display = ('name', 'email', 'review', 'rating')        
+    list_display = ('name', 'email', 'review', 'rating')   
+
+@admin.register(CartItem)
+class CartItemAdmin(admin.ModelAdmin):
+    list_display = ('user', 'product', 'quantity')

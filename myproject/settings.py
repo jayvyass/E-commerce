@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-0i&c30c9@4$3!sc@!p@a1@f%j^rqac!#6ckly!z-@%&7a@9!!^'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -71,6 +71,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',  # Ensure this is included
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                 'myapp.context_processors.cart_item_count',
             ],
         },
     },

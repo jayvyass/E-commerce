@@ -1,5 +1,7 @@
 from django import forms
 from .models import Contact , Testimonial
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
 class ContactForm(forms.ModelForm):
     class Meta:
@@ -44,3 +46,29 @@ class TestimonialForm(forms.ModelForm):
             }),
             'rating': forms.HiddenInput(attrs={'id': 'rating', 'value': '0'}),
         }
+
+class UserRegistrationForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    password_confirm = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), label='Confirm Password')
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get('password')
+        password_confirm = cleaned_data.get('password_confirm')
+
+        if password != password_confirm:
+            raise ValidationError('Passwords do not match')
+
+        return cleaned_data
+
+class UserLoginForm(forms.Form):
+    username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
