@@ -14,7 +14,10 @@ urlpatterns = [
     path('terms&condition/', views.terms, name='terms'),
     path('product/<int:product_id>', views.product_detail, name='product-detail'),
     path('cart/', views.cart, name='cart'),
+    # path('remove-cart-item/<int:product_id>/', views.remove_cart_item, name='remove_cart_item'),
+    path('update-cart-quantity/', views.update_cart_quantity, name='update-cart-quantity'),
     path('product/<int:product_id>/add-to-cart/', views.add_to_cart, name='add-to-cart'), 
+    path('apply-coupon/', views.apply_coupon, name='apply_coupon'),
     path('404/', views.error, name='error'),
 ]
 handler404 = 'myapp.views.error'

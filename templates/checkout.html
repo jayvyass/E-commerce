@@ -89,106 +89,40 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                {% for cartitem in cartitems %}
                                 <tr>
                                     <th scope="row">
                                         <div class="d-flex align-items-center mt-2">
-                                            <img src="img/vegetable-item-2.jpg" class="img-fluid rounded-circle" style="width: 90px; height: 90px;" alt="">
+                                            <img src="{{ cartitem.product.image.url }}" class="img-fluid rounded-circle" style="width: 90px; height: 90px;" alt="">
                                         </div>
                                     </th>
-                                    <td class="py-5">Awesome Brocoli</td>
-                                    <td class="py-5">$69.00</td>
-                                    <td class="py-5">2</td>
-                                    <td class="py-5">$138.00</td>
+                                    <td class="py-5">{{ cartitem.product.name }}</td>
+                                    <td class="py-5">{{ cartitem.product.price }}</td>
+                                    <td class="py-5">{{ cartitem.quantity }}</td>
+                                    <td class="py-5">{{ cartitem.total }}</td>
                                 </tr>
-                                <tr>
-                                    <th scope="row">
-                                        <div class="d-flex align-items-center mt-2">
-                                            <img src="img/vegetable-item-5.jpg" class="img-fluid rounded-circle" style="width: 90px; height: 90px;" alt="">
-                                        </div>
-                                    </th>
-                                    <td class="py-5">Potatoes</td>
-                                    <td class="py-5">$69.00</td>
-                                    <td class="py-5">2</td>
-                                    <td class="py-5">$138.00</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">
-                                        <div class="d-flex align-items-center mt-2">
-                                            <img src="img/vegetable-item-3.png" class="img-fluid rounded-circle" style="width: 90px; height: 90px;" alt="">
-                                        </div>
-                                    </th>
-                                    <td class="py-5">Big Banana</td>
-                                    <td class="py-5">$69.00</td>
-                                    <td class="py-5">2</td>
-                                    <td class="py-5">$138.00</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">
-                                    </th>
-                                    <td class="py-5"></td>
-                                    <td class="py-5"></td>
-                                    <td class="py-5">
-                                        <p class="mb-0 text-dark py-3">Subtotal</p>
-                                    </td>
-                                    <td class="py-5">
-                                        <div class="py-3 border-bottom border-top">
-                                            <p class="mb-0 text-dark">$414.00</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">
-                                    </th>
-                                    <td class="py-5">
-                                        <p class="mb-0 text-dark py-4">Shipping</p>
-                                    </td>
-                                    <td colspan="3" class="py-5">
-                                        <div class="form-check text-start">
-                                            <input type="checkbox" class="form-check-input bg-primary border-0" id="Shipping-1" name="Shipping-1" value="Shipping">
-                                            <label class="form-check-label" for="Shipping-1">Free Shipping</label>
-                                        </div>
-                                        <div class="form-check text-start">
-                                            <input type="checkbox" class="form-check-input bg-primary border-0" id="Shipping-2" name="Shipping-1" value="Shipping">
-                                            <label class="form-check-label" for="Shipping-2">Flat rate: $15.00</label>
-                                        </div>
-                                        <div class="form-check text-start">
-                                            <input type="checkbox" class="form-check-input bg-primary border-0" id="Shipping-3" name="Shipping-1" value="Shipping">
-                                            <label class="form-check-label" for="Shipping-3">Local Pickup: $8.00</label>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">
-                                    </th>
-                                    <td class="py-5">
-                                        <p class="mb-0 text-dark text-uppercase py-3">TOTAL</p>
-                                    </td>
-                                    <td class="py-5"></td>
-                                    <td class="py-5"></td>
-                                    <td class="py-5">
-                                        <div class="py-3 border-bottom border-top">
-                                            <p class="mb-0 text-dark">$135.00</p>
-                                        </div>
-                                    </td>
-                                </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
-                    <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
-                        <div class="col-12">
-                            <div class="form-check text-start my-3">
-                                <input type="checkbox" class="form-check-input bg-primary border-0" id="Transfer-1" name="Transfer" value="Transfer">
-                                <label class="form-check-label" for="Transfer-1">Direct Bank Transfer</label>
+                    <div class="bg-light rounded mt-4" style="width: 100%;">
+                        <div class="p-4">
+                            <h1 class="display-6 mb-4 text-center">Total</h1>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="mb-0 me-4" style="color: black;">Subtotal:</h5>
+                                <p class="mb-0" id="subtotal" style="color: black;">${{ subtotal|floatformat:2 }}</p>
                             </div>
-                            <p class="text-start text-dark">Make your payment directly into our bank account. Please use your Order ID as the payment reference. Your order will not be shipped until the funds have cleared in our account.</p>
+                            <div class="d-flex justify-content-between">
+                                <h5 class="mb-0 me-4" style="color: black;">Discount</h5>
+                                <div class="">
+                                    <p class="mb-0">Flat rate: $3.00</p>
+                                </div>
+                            </div>
+                            <p class="mb-0 text-end">Shipping to Ukraine.</p>
                         </div>
-                    </div>
-                    <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
-                        <div class="col-12">
-                            <div class="form-check text-start my-3">
-                                <input type="checkbox" class="form-check-input bg-primary border-0" id="Payments-1" name="Payments" value="Payments">
-                                <label class="form-check-label" for="Payments-1">Check Payments</label>
-                            </div>
+                        <div class="py-4 mb-4 border-top border-bottom d-flex justify-content-between">
+                            <h5 class="mb-0 ps-4 me-4" style="color: black;">Total</h5>
+                            <p class="mb-0 pe-4" id="total" style="color: black;">${{ total|floatformat:2 }}</p>
                         </div>
                     </div>
                     <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">

@@ -83,3 +83,12 @@ class Testimonial(models.Model):
 
     def __str__(self):
         return f"Testimonial by {self.name}"
+    
+
+class Coupon(models.Model):
+    coupon_id = models.AutoField(primary_key=True)  # Primary key field
+    coupon_name = models.CharField(max_length=255)  # Field for the name of the coupon
+    discount_percentage = models.DecimalField(max_digits=5, decimal_places=2)  # Field for the discount percentage
+
+    def __str__(self):
+        return f"Coupon: {self.coupon_name} - {self.discount_percentage}%"

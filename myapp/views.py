@@ -1,12 +1,15 @@
 from django.shortcuts import render, redirect , get_object_or_404
 from django.contrib import messages
 from .forms import ContactForm , TestimonialForm , UserRegistrationForm 
-from .models import Organic_Product ,Feature , Discount , Facts , Banner , Testimonial , CartItem
+from .models import Organic_Product ,Feature ,Coupon, Discount , Facts , Banner , Testimonial , CartItem
 from django.contrib.auth import login
 from decimal import Decimal
 from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+import json
 
 def index(request):
 
@@ -73,6 +76,7 @@ def product_detail(request, product_id):
         'reviews': reviews
     })
 
+@login_required(login_url='register')
 def add_to_cart(request, product_id):
     product = get_object_or_404(Organic_Product, product_id=product_id)
     cart_item, created = CartItem.objects.get_or_create(
@@ -83,8 +87,58 @@ def add_to_cart(request, product_id):
     if not created:
         cart_item.quantity += 1
         cart_item.save()
-
     return redirect(('cart'))
+
+
+@login_required(login_url='register')
+@csrf_exempt
+def update_cart_quantity(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        product_id = data.get('product_id')
+        new_quantity = data.get('quantity')
+
+        try:
+            # Fetch the cart item
+            cart_item = CartItem.objects.get(user=request.user, product_id=product_id)
+            if new_quantity <= 0:
+                cart_item.delete()
+            else:
+                cart_item.quantity = new_quantity
+                cart_item.save()
+
+            # Recalculate the cart totals
+            cartitems = CartItem.objects.filter(user=request.user)
+            subtotal = sum(Decimal(cart_item.product.price) * cart_item.quantity for cart_item in cartitems)
+            
+            # Fetch the coupon discount if applicable
+            coupon_name = request.session.get('coupon_name', None)
+            discount_amount = Decimal('0.00')
+
+            if coupon_name:
+                try:
+                    coupon = Coupon.objects.get(coupon_name=coupon_name)
+                    discount_percentage = coupon.discount_percentage
+                    discount_amount = subtotal * (discount_percentage / 100)
+                except Coupon.DoesNotExist:
+                    # If coupon does not exist, clear the coupon from session
+                    request.session['coupon_name'] = None
+
+            total = subtotal - discount_amount 
+
+            return JsonResponse({
+                'success': True,
+                'new_quantity': cart_item.quantity,
+                'new_total': Decimal(cart_item.product.price) * cart_item.quantity,
+                'new_subtotal': subtotal,
+                'discount_amount': discount_amount,
+                'new_total_with_shipping': total
+            })
+        except CartItem.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Cart item not found'})
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
 
 @login_required(login_url='register')
 def cart(request):
@@ -92,10 +146,9 @@ def cart(request):
     subtotal = sum(Decimal(cartitem.product.price) * cartitem.quantity for cartitem in cartitems)
 
     # Define a flat shipping rate as a Decimal
-    shipping_rate = Decimal('3.00')
-
+   
     # Calculate the total using Decimal
-    total = subtotal + shipping_rate
+    total = subtotal 
 
     # Prepare cart items with individual total price for each item
     cartitems_with_totals = [
@@ -115,9 +168,23 @@ def cart(request):
     })
 
 def checkout(request):
-    return render(request , 'checkout.html')
-
-
+    cartitems = CartItem.objects.filter(user=request.user)
+    subtotal = sum(Decimal(cartitem.product.price) * cartitem.quantity for cartitem in cartitems)
+    total = subtotal
+    cartitems_with_totals = [
+        {
+            'product': cartitem.product,
+            'quantity': cartitem.quantity,
+            'total': Decimal(cartitem.product.price) * cartitem.quantity
+        }
+        for cartitem in cartitems
+    ]
+    return render(request, 'checkout.html', {
+        'cartitems': cartitems_with_totals,
+        'subtotal': subtotal,
+        'total': total
+    })
+   
 def contact_view(request):
     if request.method == 'POST':
         form = ContactForm(request.POST)
@@ -157,3 +224,32 @@ def register(request):
     
     return render(request, 'register.html', {'form': form})
 
+def apply_coupon(request):
+    if request.method == 'POST':
+        coupon_name = request.POST.get('coupon_name', '').strip()
+        print(f"Coupon name received: {coupon_name}")
+        try:
+            coupon = Coupon.objects.get(coupon_name=coupon_name)
+            discount = coupon.discount_percentage
+            print(f"Coupon found: {coupon_name}, Discount: {discount}")
+
+            # Calculate the new total
+            cart_items = CartItem.objects.filter(user=request.user)
+            subtotal = sum(Decimal(cart_items.product.price) * cart_items.quantity for cart_items in cart_items)
+            discount_amount = subtotal * (discount / 100)
+            total = subtotal - discount_amount
+
+            print(f"Subtotal: {subtotal}, Discount Amount: {discount_amount}, Total: {total}")
+
+            return JsonResponse({
+                'success': True,
+                'discount_amount': float(discount_amount),
+               'total': float(total)
+            })
+
+        except Coupon.DoesNotExist:
+            print("Coupon does not exist")
+            return JsonResponse({'success': False, 'message': 'Invalid coupon name'})
+
+    print("Invalid request method")
+    return JsonResponse({'success': False, 'message': 'Invalid request method'})
