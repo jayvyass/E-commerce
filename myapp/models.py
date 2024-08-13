@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models import JSONField 
 
 class Contact(models.Model):
     name = models.CharField(max_length=100)
@@ -92,3 +93,19 @@ class Coupon(models.Model):
 
     def __str__(self):
         return f"Coupon: {self.coupon_name} - {self.discount_percentage}%"
+
+class BillingDetail(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    address = models.CharField(max_length=255)
+    town_city = models.CharField(max_length=100)
+    country = models.CharField(max_length=100)
+    postcode_zip = models.CharField(max_length=20)
+    mobile = models.CharField(max_length=15)
+    email = models.EmailField()
+    order_notes = models.TextField(blank=True, null=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)  # Add amount field
+    products = JSONField(default=dict) 
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Contact , Testimonial
+from .models import Contact , Testimonial , BillingDetail
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
@@ -72,3 +72,61 @@ class UserRegistrationForm(forms.ModelForm):
 class UserLoginForm(forms.Form):
     username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+
+
+class BillingDetailForm(forms.ModelForm):
+    class Meta:
+        model = BillingDetail
+        fields = [
+            'first_name',
+            'last_name',
+            'address',
+            'town_city',
+            'country',
+            'postcode_zip',
+            'mobile',
+            'email',
+            'order_notes',
+        ]
+        widgets = {
+            'first_name': forms.TextInput(attrs={
+                'class': 'form-control my-3',
+              
+            }),
+            'last_name': forms.TextInput(attrs={
+                'class': 'form-control my-3',
+               
+            }),
+            'address': forms.TextInput(attrs={
+                'class': 'form-control my-3',
+              
+            }),
+            'town_city': forms.TextInput(attrs={
+                'class': 'form-control my-3',
+                
+            }),
+            'country': forms.TextInput(attrs={
+                'class': 'form-control my-3',
+              
+            }),
+            'postcode_zip': forms.TextInput(attrs={
+                'class': 'form-control my-3',
+                
+            }),
+            'mobile': forms.TextInput(attrs={
+                'class': 'form-control my-3',
+                'type': 'tel',
+               
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'form-control my-3',
+               
+            }),
+            'order_notes': forms.Textarea(attrs={
+                'class': 'form-control my-3',
+                'cols': 30,
+                'rows': 11,
+              
+                'spellcheck': 'false',
+            }),
+        }
