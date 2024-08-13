@@ -4,6 +4,38 @@
     return tokenElement ? tokenElement.getAttribute('content') : '';
 }
 
+function removeCartItem(productId) {
+    // Logic to remove cart item
+    console.log("Removing item with product ID:", productId);
+    fetch('/remove-cart-item/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken()
+        },
+        body: JSON.stringify({
+            'product_id': productId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const cartItemRow = document.querySelector(`tr[data-product-id="${productId}"]`);
+            if (cartItemRow) {
+                cartItemRow.remove();
+            }
+            document.getElementById('subtotal').textContent = `$${data.new_subtotal.toFixed(2)}`;
+            document.getElementById('discount').textContent = `$${data.discount_amount.toFixed(2)}`;
+            document.getElementById('total').textContent = `$${data.new_total_with_shipping.toFixed(2)}`;
+        } else {
+            alert('Error removing item from cart');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while removing the item from the cart.');
+    });
+}
 
 function updateCartQuantity(productId, change) {
     // Get the current quantity input element
@@ -110,4 +142,5 @@ function applyCoupon() {
         alert('An error occurred while applying the coupon.');
     });
 }
+
 

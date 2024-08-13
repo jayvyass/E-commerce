@@ -61,10 +61,8 @@
                         <td>
                             <p class="mb-0 mt-4 total-price" style="color: black;">${{ cartitem.total|floatformat:2 }}</p>
                         </td>
-                        <td>
-                            <button class="btn btn-md rounded-circle bg-light border mt-4 btn-remove" type="button" onclick="removeCartItem({{ cartitem.product.product_id }})">
-                                <i class="fa fa-times text-danger"></i>
-                            </button>
+                        <td>                          
+                            <button class="btn btn-md rounded-circle bg-light border mt-4 btn-remove" type="button" onclick="removeCartItem({{ cartitem.product.product_id }})"><i class="fa fa-times text-danger"></i></button>
                         </td>
                     </tr>
                     {% endfor %}
@@ -72,7 +70,7 @@
             </table>
         </div>
         <div class="mt-5">
-            <input type="text" id="coupon-name" class="border-0 border-bottom rounded me-5 py-3 mb-4" placeholder="Coupon Name">
+            <input type="text" id="coupon-name" class="border-0 border-bottom rounded me-5 py-3 mb-4" placeholder="Coupon Name" style="text-align: center;">
             <button class="btn border-secondary rounded-pill px-4 py-3 text-primary" type="button" onclick="applyCoupon()">Apply Coupon</button>
         </div>
         <div class="row g-4 justify-content-end">
@@ -103,7 +101,7 @@
             </div>
         </div>
     </div>
+    <!-- Cart Page End -->
 </div>
-<!-- Cart Page End -->
 <script src={% static "js/cart.js" %}></script>
 {% endblock %}

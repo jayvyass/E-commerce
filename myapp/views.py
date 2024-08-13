@@ -253,3 +253,32 @@ def apply_coupon(request):
 
     print("Invalid request method")
     return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+def remove_cart_item(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        product_id = data.get('product_id')
+
+        # Logic to remove the product from the cart
+        try:
+            # Assume you have a function to remove the product from the cart
+            cart = request.session.get('cart', {})
+            if product_id in cart:
+                del cart[product_id]
+                request.session['cart'] = cart
+
+                # Calculate the new subtotal, discount, and total
+                new_subtotal = sum(item['quantity'] * item['price'] for item in cart.values())
+                # discount_amount = calculate_discount(cart)  # Define this function based on your logic
+                new_total_with_shipping = new_subtotal
+
+                return JsonResponse({
+                    'success': True,
+                    'new_subtotal': new_subtotal,
+                    # 'discount_amount': discount_amount,
+                    'new_total_with_shipping': new_total_with_shipping
+                })
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+
+    return JsonResponse({'success': False, 'message': 'Invalid request'})
