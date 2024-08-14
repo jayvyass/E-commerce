@@ -27,7 +27,6 @@
                                 <a href="#" class="nav-link dropdown-toggle {% if request.path == '/cart/' or request.path == '/checkout/' or request.path == '/testimonial/' or request.path == '/error/' %}active{% endif %}" data-bs-toggle="dropdown">Pages</a>
                                 <div class="dropdown-menu m-0 bg-secondary rounded-0">
                                     <a href="{% url 'cart' %}" class="dropdown-item {% if request.path == '/cart/' %}active{% endif %}">Cart</a>
-                                    <a href="{% url 'checkout' %}" class="dropdown-item {% if request.path == '/checkout/' %}active{% endif %}">Checkout</a>
                                     <a href="{% url 'testimonial' %}" class="dropdown-item {% if request.path == '/testimonial/' %}active{% endif %}">Testimonial</a>
                                 </div>
                             </div>

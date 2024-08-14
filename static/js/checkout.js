@@ -38,7 +38,10 @@ function renderPaypalButton() {
             .then(response => {
                 if (!response.ok) {
                     return response.json().then(data => {
-                        throw new Error(data.errors ? JSON.stringify(data.errors) : 'Form submission failed');
+                        if (data.errors) {
+                            displayFormErrors(data.errors);
+                        }
+                        throw new Error('Form validation failed.');
                     });
                 }
                 return response.json();
@@ -54,9 +57,6 @@ function renderPaypalButton() {
                             }
                         }]
                     });
-                } else {
-                    console.error('Form validation errors:', data.errors);
-                    alert('Form validation failed. Please check your input.');
                 }
             })
             .catch(error => {
@@ -77,6 +77,27 @@ function renderPaypalButton() {
             alert('An error occurred with PayPal Checkout. Please try again.');
         }
     }).render('#paypal-button-container');
+}
+
+// Function to display form validation errors
+function displayFormErrors(errors) {
+    // Clear previous error messages
+    document.querySelectorAll('.form-error').forEach(function(el) {
+        el.remove();
+    });
+
+    for (let field in errors) {
+        if (errors.hasOwnProperty(field)) {
+            const errorMessage = errors[field].join(' ');
+            const inputField = document.querySelector(`[name="${field}"]`);
+            if (inputField) {
+                let errorElement = document.createElement('div');
+                errorElement.className = 'form-error text-danger';
+                errorElement.textContent = errorMessage;
+                inputField.parentNode.insertBefore(errorElement, inputField.nextSibling);
+            }
+        }
+    }
 }
 
 // Render PayPal button on page load

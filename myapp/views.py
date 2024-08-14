@@ -278,12 +278,13 @@ def checkout(request):
             return JsonResponse({'success': True})
         else:
             # Return JSON response with form errors
-            return JsonResponse({'success': False, 'errors': form.errors})
+           return JsonResponse({'success': False, 'errors': form.errors}, status=400)
+
     
-            # Handle GET requests or other methods as needed
-            # For example, you can render a template or return an error
-            return JsonResponse({'success': False, 'error': 'Invalid request method'})
-            return JsonResponse({'success': False, 'errors': form.errors}, status=400)
+            # # Handle GET requests or other methods as needed
+            # # For example, you can render a template or return an error
+            # return JsonResponse({'success': False, 'error': 'Invalid request method'})
+            # return JsonResponse({'success': False, 'errors': form.errors}, status=400)
 
     else:
         form = BillingDetailForm()
