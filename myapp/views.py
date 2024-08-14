@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect , get_object_or_404
 from django.contrib import messages
 from .forms import ContactForm , TestimonialForm , UserRegistrationForm , BillingDetailForm
 from .models import Organic_Product ,Feature ,Coupon, Discount , Facts , Banner , Testimonial , CartItem
-from django.contrib.auth import login
+from django.contrib.auth import login , logout
 from decimal import Decimal
 from django.http import JsonResponse , HttpResponseRedirect
 from django.views.decorators.http import require_POST
@@ -11,6 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 import json
+from django.contrib.auth.forms import AuthenticationForm
 
 
 def index(request):
@@ -78,7 +79,7 @@ def product_detail(request, product_id):
         'reviews': reviews
     })
 
-@login_required(login_url='register')
+@login_required(login_url='login')
 def add_to_cart(request, product_id):
     product = get_object_or_404(Organic_Product, product_id=product_id)
     cart_item, created = CartItem.objects.get_or_create(
@@ -92,7 +93,7 @@ def add_to_cart(request, product_id):
     return redirect(('cart'))
 
 
-@login_required(login_url='register')
+@login_required(login_url='login')
 @csrf_exempt
 def update_cart_quantity(request):
     if request.method == 'POST':
@@ -116,7 +117,6 @@ def update_cart_quantity(request):
 
             # Fetch the coupon discount if applicable
             coupon_name = request.session.get('coupon_name', None)
-            print(f"Coupon Name from session: {coupon_name}")
             discount_amount = Decimal('0.00')
 
             if coupon_name:
@@ -128,8 +128,10 @@ def update_cart_quantity(request):
                     # If coupon does not exist, clear the coupon from session
                     request.session['coupon_name'] = None
 
+            # Calculate the final total after discount
             total = subtotal - discount_amount
 
+            # Prepare the response
             return JsonResponse({
                 'success': True,
                 'new_quantity': cart_item.quantity,
@@ -138,13 +140,14 @@ def update_cart_quantity(request):
                 'discount_amount': discount_amount,
                 'new_total_with_shipping': total
             })
+
         except CartItem.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Cart item not found'})
-    
+
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
 
-@login_required(login_url='register')
+@login_required(login_url='login')
 @csrf_exempt
 def remove_cart_item(request):
     if request.method == 'POST':
@@ -185,7 +188,7 @@ def remove_cart_item(request):
     return JsonResponse({'success': False, 'message': 'Invalid request'})
 
 
-@login_required(login_url='register')
+@login_required(login_url='login')
 def cart(request):
     cartitems = CartItem.objects.filter(user=request.user)
     subtotal = sum(Decimal(cartitem.product.price) * cartitem.quantity for cartitem in cartitems)
@@ -212,7 +215,7 @@ def cart(request):
         'total': total
     })
 
-@login_required(login_url='register')
+@login_required(login_url='login')
 @csrf_exempt
 def apply_coupon(request):
     if request.method == 'POST':
@@ -250,7 +253,7 @@ def apply_coupon(request):
 
 
 
-@login_required
+@login_required(login_url='login')
 def checkout(request):
     if request.method == 'POST':
         form = BillingDetailForm(request.POST)
@@ -274,6 +277,7 @@ def checkout(request):
             billing_detail.products = products
             billing_detail.save()
             CartItem.objects.filter(user=request.user).delete()
+            messages.success(request, 'Transaction completed successfully!')
             # Return JSON response for AJAX
             return JsonResponse({'success': True})
         else:
@@ -336,6 +340,11 @@ def policy(request):
 def terms(request):
     return render(request , 't&c.html')
    
+
+def logout_view(request):
+    logout(request)
+    return redirect('index')
+
 def register(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
@@ -343,11 +352,23 @@ def register(request):
             user = form.save(commit=False)
             user.set_password(form.cleaned_data['password'])
             user.save()
-            login(request, user)
-            return redirect('index')  # Redirect to the home page or wherever you want
+            messages.success(request, 'Registration successful. You can now log in.')
+            return redirect('login')  # You can handle Toastify on the login page
     else:
         form = UserRegistrationForm()
-    
+
     return render(request, 'register.html', {'form': form})
 
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            messages.success(request, 'Welcome to fruitables! from farm to your family.')
+            return redirect('index')  # Show Toastify on the index page or handle Toastify on login page
+    else:
+        form = AuthenticationForm()
+    
+    return render(request, 'login.html', {'form': form})
 

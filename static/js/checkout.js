@@ -61,24 +61,41 @@ function renderPaypalButton() {
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('An error occurred. Please try again.');
+                Toastify({
+                    text: 'An error occurred. Please try again.',
+                    duration: 5000,
+                    backgroundColor: 'linear-gradient(to right, #FF5F6D, #FFC371)',
+                    close: true
+                }).showToast();
             });
         },
         onApprove: function (data, actions) {
             return actions.order.capture().then(function (details) {
-                alert('Transaction completed by ' + details.payer.name.given_name);
-
+              
+                Toastify({
+                    text: 'Transaction completed by ' + details.payer.name.given_name,
+                    duration: 5000,
+                    backgroundColor: 'linear-gradient(to right, #00b09b, #96c93d)',
+                    close: true
+                }).showToast();
                 // Redirect to the success page or perform any additional actions
-                window.location.href = '/'; // Change to your success page URL
+                window.location.href = '/';// Change to your success page URL
             });
         },
         onError: function(err) {
             console.error('PayPal checkout error', err);
-            alert('An error occurred with PayPal Checkout. Please try again.');
+            Toastify({
+                text: 'An error occurred with PayPal Checkout. Please try again.',
+                duration: 5000,
+                backgroundColor: 'linear-gradient(to right, #FF5F6D, #FFC371)',
+                close: true
+            }).showToast();
         }
     }).render('#paypal-button-container');
 }
 
+
+// Function to display form validation errors
 // Function to display form validation errors
 function displayFormErrors(errors) {
     // Clear previous error messages
@@ -88,13 +105,13 @@ function displayFormErrors(errors) {
 
     for (let field in errors) {
         if (errors.hasOwnProperty(field)) {
-            const errorMessage = errors[field].join(' ');
+            const errorMessages = errors[field].join(' ');
             const inputField = document.querySelector(`[name="${field}"]`);
             if (inputField) {
                 let errorElement = document.createElement('div');
                 errorElement.className = 'form-error text-danger';
-                errorElement.textContent = errorMessage;
-                inputField.parentNode.insertBefore(errorElement, inputField.nextSibling);
+                errorElement.textContent = `Error in ${field.replace(/([A-Z])/g, ' $1')}: ${errorMessages}`;
+                inputField.parentNode.insertBefore(errorElement, inputField.nextSibling);  
             }
         }
     }

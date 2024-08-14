@@ -75,7 +75,18 @@ function handleUpdateCartResponse(data, quantityInput, totalPrice) {
 
 // Function to apply a coupon
 function applyCoupon() {
-    const couponName = document.getElementById('coupon-name').value;
+    const couponName = document.getElementById('coupon-name').value.trim();
+
+    if (couponName === '') {
+        Toastify({
+            text: "Please enter a coupon code.",
+            duration: 3000,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "#FFA500",
+        }).showToast();
+        return;
+    }
 
     fetch('/apply-coupon/', {
         method: 'POST',
@@ -94,26 +105,53 @@ function applyCoupon() {
     .then(data => handleApplyCouponResponse(data))
     .catch(error => {
         console.error('Error applying coupon:', error);
-        alert('An error occurred while applying the coupon.');
+        Toastify({
+            text: "An error occurred while applying the coupon.",
+            duration: 3000,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "#FF0000",
+        }).showToast();
     });
 }
+
 
 // Handle response for applying a coupon
 function handleApplyCouponResponse(data) {
     if (data.success) {
-        // Ensure data.total and data.discount_amount are treated as numbers
         const total = parseFloat(data.total);
         const discountAmount = parseFloat(data.discount_amount);
 
         if (!isNaN(total) && !isNaN(discountAmount)) {
             document.getElementById('total').textContent = `$${total.toFixed(2)}`;
             document.getElementById('discount').textContent = `$${discountAmount.toFixed(2)}`;
-            alert('Coupon applied successfully!');
+            Toastify({
+                text: "Coupon applied Succesfully !",
+                duration: 3000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#4CAF50",
+                style: {
+                    marginTop: "28px"  // Adjust the value as needed
+                }
+            }).showToast();
         } else {
-            alert('Invalid total or discount amount received.');
+            Toastify({
+                text: "Invalid total or discount amount received.",
+                duration: 3000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#FF0000",
+            }).showToast();
         }
     } else {
-        alert(data.message);
+        Toastify({
+            text: data.message,
+            duration: 3000,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "#FFA500",
+        }).showToast();
     }
 }
 
