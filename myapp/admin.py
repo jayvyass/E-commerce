@@ -31,7 +31,7 @@ class BannerAdmin(admin.ModelAdmin):
 
 @admin.register(Testimonial)
 class TestimonialAdmin(admin.ModelAdmin):
-    list_display = ('name', 'email', 'review', 'rating')   
+    list_display = ('name', 'email', 'rating')   
 
 @admin.register(CartItem)
 class CartItemAdmin(admin.ModelAdmin):

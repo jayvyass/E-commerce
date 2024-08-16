@@ -32,9 +32,16 @@ class CartItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey('Organic_Product', on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
+    total = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    discount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     def __str__(self):
         return f"{self.quantity} of {self.product.name}"
+    def update_totals(self):
+        self.subtotal = self.product.price * self.quantity
+        self.total = self.subtotal - self.discount
+        self.save()
 
 
 class Feature(models.Model):

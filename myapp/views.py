@@ -68,10 +68,10 @@ def product_detail(request, product_id):
         form = TestimonialForm(request.POST)
         if form.is_valid():
              form.save()
+             messages.success(request, 'Thank you for your review! We appreciate your feedback.')
              return redirect('index')
     else:
         form = TestimonialForm()
-
     return render(request, 'product-detail.html', {
         'product': product,
         'related_products': related_products,
@@ -320,7 +320,7 @@ def contact_view(request):
         form = ContactForm(request.POST)
         if form.is_valid():
             form.save()  # Save the form data to the database
-            messages.success(request, 'Your message has been sent successfully!')
+            messages.success(request, 'Your message has been sent successfully. Thank you for reaching out to us!')
             return redirect('contact')  # Redirect to the same page or another page after successful submission
     else:
         form = ContactForm()

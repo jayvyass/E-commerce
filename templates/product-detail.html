@@ -126,13 +126,16 @@
                                                     <i class="fa fa-star" data-value="{{ i }}"></i>
                                                 </label>
                                             {% endfor %}
+                                            {% if form.rating.errors %}
+                                                <div class="errorlist">{{ form.rating.errors.0 }}</div>
+                                            {% endif %}
                                         </div>                                        
                                     </div>
                                     <button type="submit" class="btn border border-secondary text-primary rounded-pill px-4 py-3">Post Comment</button>
                                 </div>
                             </div>
                         </div>
-                    </form>                 
+                    </form>                         
                 </div>
             </div>
             
@@ -156,9 +159,18 @@
                 </div>
                 {% empty %}
                 <p>No related products available.</p>
-                {% endfor %}
+                {% endfor %}     
             </div>
         </div>
     </div>
 </div>
+<style>
+    .errorlist {
+        color: red;
+        font-size: 14px; /* Adjust the size if needed */
+        margin-top: 5px; /* Adjust the spacing if needed */
+    }
+    
+</style>
+
 {% endblock %}

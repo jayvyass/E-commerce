@@ -29,23 +29,18 @@ class TestimonialForm(forms.ModelForm):
         model = Testimonial
         fields = ['name', 'email', 'review', 'rating']
         widgets = {
-            'name': forms.TextInput(attrs={
-                'class': 'form-control border-0 me-4',
-                'placeholder': 'Your Name '
-            }),
-            'email': forms.EmailInput(attrs={
-                'class': 'form-control border-0',
-                'placeholder': 'Your Email '
-            }),
-            'review': forms.Textarea(attrs={
-                'class': 'form-control border-0',
-                'cols': 30,
-                'rows': 8,
-                'placeholder': 'Your Review ',
-                'spellcheck': 'false'
-            }),
+            'name': forms.TextInput(attrs={'class': 'form-control border-0 me-4', 'placeholder': 'Your Name '}),
+            'email': forms.EmailInput(attrs={'class': 'form-control border-0', 'placeholder': 'Your Email '}),
+            'review': forms.Textarea(attrs={'class': 'form-control border-0', 'cols': 30, 'rows': 8, 'placeholder': 'Your Review ', 'spellcheck': 'false'}),
             'rating': forms.HiddenInput(attrs={'id': 'rating', 'value': '0'}),
         }
+
+    def clean_rating(self):
+        rating = self.cleaned_data.get('rating')
+        if not rating or rating == '0':
+            raise forms.ValidationError('Please select a rating.')
+        return rating
+
 
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(
@@ -83,8 +78,8 @@ class UserRegistrationForm(forms.ModelForm):
         return user
 
 class UserLoginForm(forms.Form):
-    username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control border-0 ',}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control border-0 ',}))
 
 
 class BillingDetailForm(forms.ModelForm):
