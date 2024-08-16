@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import JSONField 
+from decimal import Decimal
 
 class Contact(models.Model):
     name = models.CharField(max_length=100)
@@ -25,6 +26,9 @@ class Organic_Product(models.Model):
         choices=PRODUCT_CATEGORY_CHOICES,
         default='FRUIT',  # Default to 'Fruit'
     )
+    weight = models.CharField(max_length=50, null=True, blank=True)  # Weight with unit (e.g., "1 kg", "1 piece")
+    country = models.CharField(max_length=255, null=True, blank=True)  # Country of origin
+
     def __str__(self):
         return self.name
 
@@ -39,10 +43,11 @@ class CartItem(models.Model):
     def __str__(self):
         return f"{self.quantity} of {self.product.name}"
     def update_totals(self):
-        self.subtotal = self.product.price * self.quantity
-        self.total = self.subtotal - self.discount
+        if self.subtotal == self.total:
+            self.discount = Decimal('0.00')
+        else:
+            self.discount = self.subtotal - self.total
         self.save()
-
 
 class Feature(models.Model):
     feature_id = models.AutoField(primary_key=True)

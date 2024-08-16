@@ -25,6 +25,7 @@
                             <th scope="col">Name</th>
                             <th scope="col">Price</th>
                             <th scope="col">Quantity</th>
+                            <th scope="col">Weight</th>
                             <th scope="col">Total</th>
                             <th scope="col">Handle</th>
                         </tr>
@@ -41,7 +42,7 @@
                                 <p class="mb-0 mt-4" style="color: black;">{{ cartitem.product.name }}</p>
                             </td>
                             <td>
-                                <p class="mb-0 mt-4 price">${{ cartitem.product.price|floatformat:2 }}</p>
+                                <p class="mb-0 mt-4 price"style="color: black;">${{ cartitem.product.price|floatformat:2 }}</p>
                             </td>
                             <td>
                                 <div class="input-group quantity mt-4" style="width: 100px;">
@@ -57,6 +58,9 @@
                                         </button>
                                     </div>
                                 </div>
+                            </td>
+                            <td>
+                                <p class="mb-0 mt-4" style="color: black;">{{ cartitem.product.weight }}</p>
                             </td>                                            
                             <td>
                                 <p class="mb-0 mt-4 total-price" style="color: black;">${{ cartitem.total|floatformat:2 }}</p>
@@ -86,7 +90,7 @@
                             <div class="d-flex justify-content-between">
                                 <h5 class="mb-0 me-4" style="color: black;">Discount:</h5>
                                 <div class="">
-                                    <p class="mb-0" id="discount" style="color: black;">${{ discount_amount|floatformat:2 }}</p> 
+                                    <p class="mb-0" id="discount" style="color: black;">${{ discount|floatformat:2 }}</p> 
                                 </div>
                             </div>
                         </div>
@@ -95,7 +99,7 @@
                             <p class="mb-0 pe-4" id="total" style="color: black;">${{ total|floatformat:2 }}</p>
                         </div>
                         <a href="{% url 'checkout' %}">
-                            <button class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="button" onclick="proceedToCheckout()">Proceed Checkout</button>
+                            <button class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="button" onclick="proceedToCheckout()" >Proceed Checkout</button>
                         </a>
                     </div>
                 </div>

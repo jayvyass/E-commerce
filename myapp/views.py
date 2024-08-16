@@ -85,7 +85,8 @@ def add_to_cart(request, product_id):
     cart_item, created = CartItem.objects.get_or_create(
         user=request.user,
         product=product,
-        defaults={'quantity': 1}  # Default quantity
+        defaults={'quantity': 1} 
+        
     )
     if not created:
         cart_item.quantity += 1
@@ -100,7 +101,8 @@ def update_cart_quantity(request):
         data = json.loads(request.body)
         product_id = data.get('product_id')
         new_quantity = data.get('quantity')
-
+        coupon_name = data.get('coupon_name', '').strip()
+        
         try:
             # Fetch the cart item
             cart_item = CartItem.objects.get(user=request.user, product_id=product_id)
@@ -114,31 +116,30 @@ def update_cart_quantity(request):
             # Recalculate the cart totals
             cart_items = CartItem.objects.filter(user=request.user)
             subtotal = sum(Decimal(cart_item.product.price) * cart_item.quantity for cart_item in cart_items)
-
+            
             # Fetch the coupon discount if applicable
-            coupon_name = request.session.get('coupon_name', None)
             discount_amount = Decimal('0.00')
-
+            
             if coupon_name:
                 try:
                     coupon = Coupon.objects.get(coupon_name=coupon_name)
                     discount_percentage = coupon.discount_percentage
                     discount_amount = subtotal * (discount_percentage / 100)
                 except Coupon.DoesNotExist:
-                    # If coupon does not exist, clear the coupon from session
-                    request.session['coupon_name'] = None
+                    coupon_name = None
 
             # Calculate the final total after discount
             total = subtotal - discount_amount
+            cart_items.update(discount=discount_amount, total=total, subtotal=subtotal)
 
             # Prepare the response
             return JsonResponse({
                 'success': True,
                 'new_quantity': cart_item.quantity,
-                'new_total': Decimal(cart_item.product.price) * cart_item.quantity,
-                'new_subtotal': subtotal,
-                'discount_amount': discount_amount,
-                'new_total_with_shipping': total
+                'new_total': float(Decimal(cart_item.product.price) * cart_item.quantity),
+                'new_subtotal': float(subtotal),
+                'discount_amount': float(discount_amount),
+                'new_total_with_shipping': float(total)
             })
 
         except CartItem.DoesNotExist:
@@ -146,14 +147,13 @@ def update_cart_quantity(request):
 
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
-
 @login_required(login_url='login')
 @csrf_exempt
 def remove_cart_item(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         product_id = data.get('product_id')
-
+        coupon_name = data.get('coupon_name', '').strip()
         try:
             cart_item = CartItem.objects.get(user=request.user, product_id=product_id)
             cart_item.delete()
@@ -162,8 +162,6 @@ def remove_cart_item(request):
             cartitems = CartItem.objects.filter(user=request.user)
             subtotal = sum(Decimal(cart_item.product.price) * cart_item.quantity for cart_item in cartitems)
             
-            # Fetch the coupon discount if applicable
-            coupon_name = request.session.get('coupon_name', None)
             discount_amount = Decimal('0.00')
 
             if coupon_name:
@@ -175,7 +173,7 @@ def remove_cart_item(request):
                     request.session['coupon_name'] = None
 
             total = subtotal - discount_amount 
-
+            cartitems.update(discount=discount_amount, total=total, subtotal=subtotal)
             return JsonResponse({
                 'success': True,
                 'new_subtotal': subtotal,
@@ -193,11 +191,11 @@ def cart(request):
     cartitems = CartItem.objects.filter(user=request.user)
     subtotal = sum(Decimal(cartitem.product.price) * cartitem.quantity for cartitem in cartitems)
 
-    # Define a flat shipping rate as a Decimal
-   
-    # Calculate the total using Decimal
     total = subtotal 
-
+    for cartitem in cartitems:
+            cartitem.subtotal = total
+            cartitem.total = total
+            cartitem.update_totals()
     # Prepare cart items with individual total price for each item
     cartitems_with_totals = [
         {
@@ -212,7 +210,8 @@ def cart(request):
     return render(request, 'cart.html', {
         'cartitems': cartitems_with_totals,
         'subtotal': subtotal,
-        'total': total
+        'total': total,
+
     })
 
 @login_required(login_url='login')
@@ -220,24 +219,29 @@ def cart(request):
 def apply_coupon(request):
     if request.method == 'POST':
         coupon_name = request.POST.get('coupon_name', '').strip()
-        print(f"Coupon name received: {coupon_name}")
-
+        
+        if not coupon_name:
+            # If the input field is empty, clear the session and return 0 discount
+            request.session['coupon_name'] = None
+            return JsonResponse({
+                'success': True,
+                'discount_amount': 0.0,
+                'total': 0.0,  # Assuming you want to update the total as well
+            })
+        
         try:
             coupon = Coupon.objects.get(coupon_name=coupon_name)
             discount = coupon.discount_percentage
-            print(f"Coupon found: {coupon_name}, Discount: {discount}")
-
+            
             # Store coupon name in session
-            request.session['coupon_name'] = coupon_name
+         
 
             # Calculate the new total
             cart_items = CartItem.objects.filter(user=request.user)
             subtotal = sum(Decimal(cart_item.product.price) * cart_item.quantity for cart_item in cart_items)
             discount_amount = subtotal * (discount / 100)
             total = subtotal - discount_amount
-
-            print(f"Subtotal: {subtotal}, Discount Amount: {discount_amount}, Total: {total}")
-
+            cart_items.update(discount=discount_amount, total=total, subtotal=subtotal)
             return JsonResponse({
                 'success': True,
                 'discount_amount': float(discount_amount),
@@ -245,11 +249,12 @@ def apply_coupon(request):
             })
 
         except Coupon.DoesNotExist:
-            print("Coupon does not exist")
+            # Clear session if coupon is invalid
+            request.session['coupon_name'] = None
             return JsonResponse({'success': False, 'message': 'Invalid coupon name'})
 
-    print("Invalid request method")
     return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
 
 
 
@@ -258,13 +263,10 @@ def checkout(request):
     if request.method == 'POST':
         form = BillingDetailForm(request.POST)
         if form.is_valid():
-            # Create a BillingDetail instance without saving to the database
             billing_detail = form.save(commit=False)
-            
-            # Set the user field to the currently logged-in user
             billing_detail.user = request.user
             billing_detail.amount = request.POST.get('amount', 0)
-            # Save the BillingDetail instance to the database
+
             products = {}
             for key in request.POST.keys():
                 if key.startswith('product_name_'):
@@ -273,38 +275,39 @@ def checkout(request):
                     product_quantity = request.POST.get(f'product_quantity_{index}', 0)
                     products[product_name] = product_quantity
 
-            # Save the product details as JSON
             billing_detail.products = products
             billing_detail.save()
             CartItem.objects.filter(user=request.user).delete()
             messages.success(request, 'Transaction completed successfully!')
-            # Return JSON response for AJAX
             return JsonResponse({'success': True})
         else:
-            # Return JSON response with form errors
-           return JsonResponse({'success': False, 'errors': form.errors}, status=400)
-
-    
-            # # Handle GET requests or other methods as needed
-            # # For example, you can render a template or return an error
-            # return JsonResponse({'success': False, 'error': 'Invalid request method'})
-            # return JsonResponse({'success': False, 'errors': form.errors}, status=400)
-
+            return JsonResponse({'success': False, 'errors': form.errors}, status=400)
     else:
         form = BillingDetailForm()
-
+    
+    # Retrieve values from session storage or query parameters
     cartitems = CartItem.objects.filter(user=request.user)
-    subtotal = request.GET.get('subtotal', '0.00')
-    discount = request.GET.get('discount', '0.00')
-    total = request.GET.get('total', '0.00')
+
+    subtotal = 0
+    discount = 0
+    total = 0
+
+# Get subtotal, discount, and total from the first CartItem instance if it exists
+    if cartitems.exists():
+        first_cartitem = cartitems.first()
+        subtotal = first_cartitem.subtotal
+        discount = first_cartitem.discount
+        total = first_cartitem.total
+
     cartitems_with_totals = [
         {
             'product': cartitem.product,
             'quantity': cartitem.quantity,
-            'total': Decimal(cartitem.product.price) * cartitem.quantity
+            'total': Decimal(cartitem.product.price) * cartitem.quantity,
         }
         for cartitem in cartitems
     ]
+    
     return render(request, 'checkout.html', {
         'form': form,
         'cartitems': cartitems_with_totals,
@@ -312,6 +315,7 @@ def checkout(request):
         'discount_amount': discount,
         'total': total
     })
+
 
 
    

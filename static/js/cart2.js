@@ -12,17 +12,16 @@ function getCSRFTokenFromCookies() {
     return parts.length === 2 ? parts.pop().split(';').shift() : '';
 }
 
-// Function to update the quantity of a cart item
 function updateCartQuantity(productId, change) {
     const cartItemRow = document.querySelector(`tr[data-product-id="${productId}"]`);
     if (!cartItemRow) return;
-
+    const couponName = document.getElementById('coupon-name').value.trim();
     const quantityInput = cartItemRow.querySelector('.quantity-input');
     let currentQuantity = Number(quantityInput.value);
     let newQuantity = currentQuantity + change;
 
     // Ensure newQuantity is not less than zero
-    if (newQuantity < 0) newQuantity = 0;
+    if (newQuantity < 1) newQuantity = 1;
 
     // Temporarily update the quantity on the client-side
     quantityInput.value = newQuantity;
@@ -41,7 +40,8 @@ function updateCartQuantity(productId, change) {
         },
         body: JSON.stringify({
             'product_id': productId,
-            'quantity': newQuantity
+            'quantity': newQuantity,
+            'coupon_name': couponName
         })
     })
     .then(response => response.json())
@@ -51,25 +51,20 @@ function updateCartQuantity(productId, change) {
 
 function handleUpdateCartResponse(data, quantityInput, totalPrice) {
     if (data.success) {
-        // Correct the UI with the actual server response
-        const newQuantity = Number(data.new_quantity);
-        const newTotal = Number(data.new_total);
-        const newSubtotal = Number(data.new_subtotal);
-        const discountAmount = Number(data.discount_amount);
-        const newTotalWithShipping = Number(data.new_total_with_shipping);
-
         // Update the UI with the server response
-        quantityInput.value = newQuantity;
-        totalPrice.textContent = `$${newTotal.toFixed(2)}`;
+        quantityInput.value = data.new_quantity;
+        totalPrice.textContent = `$${data.new_total.toFixed(2)}`;
 
         // Update subtotal, discount, and total in the cart summary
-        document.getElementById('subtotal').textContent = `$${newSubtotal.toFixed(2)}`;
-        document.getElementById('discount').textContent = `$${discountAmount.toFixed(2)}`;
-        document.getElementById('total').textContent = `$${newTotalWithShipping.toFixed(2)}`;
+        document.getElementById('subtotal').textContent = `$${data.new_subtotal.toFixed(2)}`;
+        document.getElementById('discount').textContent = `$${data.discount_amount.toFixed(2)}`;
+        document.getElementById('total').textContent = `$${data.new_total_with_shipping.toFixed(2)}`;
     } else {
         console.error('Error updating cart item:', data.error);
     }
 }
+
+
 
 
 
@@ -157,6 +152,7 @@ function handleApplyCouponResponse(data) {
 
 // Function to remove a cart item
 function removeCartItem(productId) {
+    const couponName = document.getElementById('coupon-name').value.trim();
     console.log("Removing item with product ID:", productId);
     fetch('/remove-cart-item/', {
         method: 'POST',
@@ -165,7 +161,8 @@ function removeCartItem(productId) {
             'X-CSRFToken': getCSRFToken()
         },
         body: JSON.stringify({
-            'product_id': productId
+            'product_id': productId,
+            'coupon_name':couponName
         })
     })
     .then(response => response.json())

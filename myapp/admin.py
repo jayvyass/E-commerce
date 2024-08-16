@@ -35,7 +35,7 @@ class TestimonialAdmin(admin.ModelAdmin):
 
 @admin.register(CartItem)
 class CartItemAdmin(admin.ModelAdmin):
-    list_display = ('user', 'product', 'quantity')
+    list_display = ('user', 'product', 'quantity','subtotal','discount','total')
 
 @admin.register(Coupon)
 class CouponAdmin(admin.ModelAdmin):

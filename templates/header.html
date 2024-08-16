@@ -23,11 +23,11 @@
                             <a href="{% url 'index' %}" class="nav-item nav-link {% if request.path == '/' %}active{% endif %}">Home</a>
                             <a href="{% url 'fruits' %}" class="nav-item nav-link {% if request.path == '/fruits/' %}active{% endif %}">Fruits</a>
                             <a href="{% url 'vegetable' %}" class="nav-item nav-link {% if request.path == '/vegetable/' %}active{% endif %}">Vegetables</a>
-                            <a href="{% url 'cart' %}" class="nav-item nav-link {% if request.path == '/contact/' %}active{% endif %}">Cart</a>
+                            <a href="{% url 'cart' %}" class="nav-item nav-link {% if request.path == '/cart/' %}active{% endif %}">Cart</a>
                             <div class="nav-item dropdown">
-                                <a href="#" class="nav-link dropdown-toggle {% if request.path == '/cart/' or request.path == '/checkout/' or request.path == '/testimonial/' or request.path == '/error/' %}active{% endif %}" data-bs-toggle="dropdown">Pages</a>
+                                <a href="#" class="nav-link dropdown-toggle {% if request.path == '/contact/' or request.path == '/testimonial/' or request.path == '/error/' %}active{% endif %}" data-bs-toggle="dropdown">Pages</a>
                                 <div class="dropdown-menu m-0 bg-secondary rounded-0">
-                                    <a href="{% url 'contact' %}" class="dropdown-item {% if request.path == '/cart/' %}active{% endif %}">Contact</a>
+                                    <a href="{% url 'contact' %}" class="dropdown-item {% if request.path == '/contact/' %}active{% endif %}">Contact</a>
                                     <a href="{% url 'testimonial' %}" class="dropdown-item {% if request.path == '/testimonial/' %}active{% endif %}">Testimonial</a>
                                 </div>
                             </div>
