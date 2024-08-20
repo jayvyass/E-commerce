@@ -119,5 +119,6 @@ class BillingDetail(models.Model):
     order_notes = models.TextField(blank=True, null=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)  # Add amount field
     products = JSONField(default=dict) 
+    created_at = models.DateTimeField(auto_now_add=True) 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"

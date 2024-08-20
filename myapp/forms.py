@@ -133,7 +133,7 @@ class BillingDetailForm(forms.ModelForm):
             'order_notes': forms.Textarea(attrs={
                 'class': 'form-control my-3',
                 'cols': 30,
-                'rows': 11,
+                'rows': 8,
               
                 'spellcheck': 'false',
             }),

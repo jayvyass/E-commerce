@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect , get_object_or_404
 from django.contrib import messages
 from .forms import ContactForm , TestimonialForm , UserRegistrationForm , BillingDetailForm
-from .models import Organic_Product ,Feature ,Coupon, Discount , Facts , Banner , Testimonial , CartItem
+from .models import Organic_Product ,BillingDetail,Feature ,Coupon, Discount , Facts , Banner , Testimonial , CartItem
 from django.contrib.auth import login , logout
 from decimal import Decimal
 from django.http import JsonResponse , HttpResponseRedirect
@@ -190,7 +190,7 @@ def remove_cart_item(request):
 def cart(request):
     cartitems = CartItem.objects.filter(user=request.user)
     subtotal = sum(Decimal(cartitem.product.price) * cartitem.quantity for cartitem in cartitems)
-
+    discount = Decimal('0.00')
     total = subtotal 
     for cartitem in cartitems:
             cartitem.subtotal = total
@@ -211,6 +211,7 @@ def cart(request):
         'cartitems': cartitems_with_totals,
         'subtotal': subtotal,
         'total': total,
+        'discount': discount
 
     })
 
@@ -257,16 +258,19 @@ def apply_coupon(request):
 
 
 
-
 @login_required(login_url='login')
 def checkout(request):
+    # Check if the user already has billing details
+    previous_billing_detail = BillingDetail.objects.filter(user=request.user).first()
+
     if request.method == 'POST':
+        # Always create a new BillingDetail instance
         form = BillingDetailForm(request.POST)
         if form.is_valid():
             billing_detail = form.save(commit=False)
             billing_detail.user = request.user
             billing_detail.amount = request.POST.get('amount', 0)
-
+            # Handle products information
             products = {}
             for key in request.POST.keys():
                 if key.startswith('product_name_'):
@@ -277,22 +281,26 @@ def checkout(request):
 
             billing_detail.products = products
             billing_detail.save()
+            
+            # Clear the cart items after the order is placed
             CartItem.objects.filter(user=request.user).delete()
             messages.success(request, 'Transaction completed successfully!')
             return JsonResponse({'success': True})
         else:
             return JsonResponse({'success': False, 'errors': form.errors}, status=400)
     else:
-        form = BillingDetailForm()
-    
-    # Retrieve values from session storage or query parameters
+        # Pre-fill form with existing billing details if available
+        if previous_billing_detail:
+            form = BillingDetailForm(instance=previous_billing_detail)
+        else:
+            form = BillingDetailForm()
+
     cartitems = CartItem.objects.filter(user=request.user)
 
     subtotal = 0
     discount = 0
     total = 0
 
-# Get subtotal, discount, and total from the first CartItem instance if it exists
     if cartitems.exists():
         first_cartitem = cartitems.first()
         subtotal = first_cartitem.subtotal
@@ -313,9 +321,9 @@ def checkout(request):
         'cartitems': cartitems_with_totals,
         'subtotal': subtotal,
         'discount_amount': discount,
-        'total': total
+        'total': total,
+        'billing_detail_exists': previous_billing_detail is not None
     })
-
 
 
    

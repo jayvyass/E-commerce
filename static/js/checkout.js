@@ -22,10 +22,11 @@ function renderPaypalButton() {
             label: 'pay',
             height: 50
         },
-        createOrder: function (data, actions) {
+        createOrder: function(data, actions) {
             const form = document.getElementById('checkout-form');
             const formData = new FormData(form);
 
+            // Submit form data to the server first
             return fetch(form.action, {
                 method: 'POST',
                 body: formData,
@@ -47,7 +48,8 @@ function renderPaypalButton() {
             })
             .then(data => {
                 if (data.success) {
-                    const totalPrice = document.getElementById('total').textContent.replace('$', '').trim();
+                    // Proceed with PayPal payment
+                  
                     return actions.order.create({
                         purchase_units: [{
                             amount: {
@@ -55,6 +57,8 @@ function renderPaypalButton() {
                             }
                         }]
                     });
+                } else {
+                    throw new Error('Failed to process order.');
                 }
             })
             .catch(error => {
@@ -67,21 +71,20 @@ function renderPaypalButton() {
                 }).showToast();
             });
         },
-        onApprove: function (data, actions) {
-            return actions.order.capture().then(function (details) {
+        onApprove: function(data, actions) {
+            return actions.order.capture().then(function(details) {
                 Toastify({
                     text: 'Transaction completed by ' + details.payer.name.given_name,
                     duration: 5000,
                     backgroundColor: 'linear-gradient(to right, #00b09b, #96c93d)',
                     close: true
                 }).showToast();
-
-                // Redirect to the success page
-                window.location.href = '/';
+                // Redirect to the success page or perform any additional actions
+                window.location.href = '/'; // Change to your success page URL
             });
         },
         onError: function(err) {
-            console.error('PayPal checkout error', err);
+            console.error('PayPal checkout error:', err);
             Toastify({
                 text: 'An error occurred with PayPal Checkout. Please try again.',
                 duration: 5000,
@@ -92,10 +95,6 @@ function renderPaypalButton() {
     }).render('#paypal-button-container');
 }
 
-
-
-
-// Function to display form validation errors
 // Function to display form validation errors
 function displayFormErrors(errors) {
     // Clear previous error messages
@@ -111,7 +110,7 @@ function displayFormErrors(errors) {
                 let errorElement = document.createElement('div');
                 errorElement.className = 'form-error text-danger';
                 errorElement.textContent = `Error in ${field.replace(/([A-Z])/g, ' $1')}: ${errorMessages}`;
-                inputField.parentNode.insertBefore(errorElement, inputField.nextSibling);  
+                inputField.parentNode.insertBefore(errorElement, inputField.nextSibling);
             }
         }
     }
