@@ -288,8 +288,9 @@ def checkout(request):
         if form.is_valid():
             billing_detail = form.save(commit=False)
             billing_detail.user = request.user
-            billing_detail.amount = request.POST.get('amount', 0)
-
+            billing_detail.total = request.POST.get('amount', 0)
+            billing_detail.subtotal = Decimal(request.POST.get('subtotal', '0.00'))
+            billing_detail.discount = Decimal(request.POST.get('discount', '0.00'))
             products = {}
             for key in request.POST.keys():
                 if key.startswith('product_name_'):

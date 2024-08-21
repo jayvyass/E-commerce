@@ -35,6 +35,9 @@
             {{ form.as_p }}
             {% endif %}
             <input type="hidden" name="amount" id="amount" value="">
+            <input type="hidden" name="subtotal" id="subtotal-hidden" value="">
+            <input type="hidden" name="discount" id="discount-hidden" value="">
+        
             {% for cartitem in cartitems %}
             <input type="hidden" name="product_name_{{ forloop.counter }}" value="{{ cartitem.product.name }}">
             <input type="hidden" name="product_quantity_{{ forloop.counter }}" value="{{ cartitem.quantity }}">

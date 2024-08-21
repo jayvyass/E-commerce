@@ -43,4 +43,4 @@ class CouponAdmin(admin.ModelAdmin):
 
 @admin.register(BillingDetail)
 class BillingAdmin(admin.ModelAdmin):
-    list_display = ('id','amount','user', 'products' , 'first_name', 'country')
+    list_display = ('id', 'products','subtotal','discount','total','user', 'country')

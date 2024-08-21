@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Set the value of the hidden amount input field
     document.getElementById('amount').value = parseFloat(total).toFixed(2);
+    document.getElementById('subtotal-hidden').value = parseFloat(subtotal).toFixed(2);
+    document.getElementById('discount-hidden').value = parseFloat(discount).toFixed(2);
+   
 });
 
 // Function to render PayPal button
