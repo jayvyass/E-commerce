@@ -9,7 +9,7 @@ class ContactAdmin(admin.ModelAdmin):
 
 @admin.register(Organic_Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('product_id','name', 'price', 'category')
+    list_display = ('product_id','name', 'price', 'category', 'out_of_stock')
     list_filter = ('category',)
     search_fields = ('name', 'description')
 

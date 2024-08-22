@@ -33,7 +33,9 @@
                             </div>
                         </div>
                         <div class="d-flex m-3 me-0">
+                            {% if request.path == '/' or request.path == '/fruits/' or request.path == '/vegetable/' %}
                             <button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search text-primary"></i></button>
+                            {% endif %}
                             {% if user.is_authenticated %}
                             <a href="{% url 'cart' %}" class="position-relative me-4 my-auto">
                                 <i class="fa fa-shopping-bag fa-2x"></i>
@@ -61,21 +63,25 @@
 
 
 
-        <!-- Modal Search Start -->
-        <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-fullscreen">
-                <div class="modal-content rounded-0">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Search by keyword</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body d-flex align-items-center">
-                        <div class="input-group w-75 mx-auto d-flex">
-                            <input type="search" class="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1">
-                            <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
+        {% if request.path == '/' or request.path == '/fruits/' or request.path == '/vegetable/' %}
+            <!-- Modal Search Start -->
+            <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-fullscreen">
+                    <div class="modal-content rounded-0">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Search by keyword</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body d-flex align-items-center">
+                            <form method="GET" action="{% if request.path == '/' %}{% url 'index' %}{% elif request.path == '/fruits/' %}{% url 'fruits' %}{% elif request.path == '/vegetable/' %}{% url 'vegetable' %}{% endif %}" class="w-75 mx-auto d-flex">
+                                <input type="search" name="q" class="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1" value="{{ request.GET.q }}">
+                                <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
+                                <button type="submit" class="btn btn-primary d-none">Search</button>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- Modal Search End -->
+            <!-- Modal Search End -->
+
+        {% endif %}

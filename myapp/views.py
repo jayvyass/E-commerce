@@ -29,6 +29,9 @@ def index(request):
         products = Organic_Product.objects.filter(category='VEG')[:8]
     elif category == 'FRUIT':
         products = Organic_Product.objects.filter(category='FRUIT')[:8]
+    query = request.GET.get('q', '')
+    if query:
+        products = Organic_Product.objects.filter(name__icontains=query)
     else:
         products = Organic_Product.objects.all()[:12]
 
@@ -43,19 +46,23 @@ def index(request):
     })
 
 def vegetable(request):
+    query = request.GET.get('q', '')
+    if query:
+        vegetable_products = Organic_Product.objects.filter(category='VEG', name__icontains=query)[:20]
+    else:
+        vegetable_products = Organic_Product.objects.filter(category='VEG')[:20]
 
-    # Query the database for products with category 'Fruit'
-    vegetable_products = Organic_Product.objects.filter(category='VEG')[:20]
-    # Render the template and pass the products
-    return render(request, 'vegetable.html', {'vegetable_products': vegetable_products})
+    return render(request, 'vegetable.html', {'vegetable_products': vegetable_products, 'search_query': query})
 
 
 def fruits(request):
+    query = request.GET.get('q', '')
+    if query:
+        fruit_products = Organic_Product.objects.filter(category='FRUIT', name__icontains=query)[:20]
+    else:
+        fruit_products = Organic_Product.objects.filter(category='FRUIT')[:20]
 
-    # Query the database for products with category 'Fruit'
-    fruit_products = Organic_Product.objects.filter(category='FRUIT')[:20]
-    # Render the template and pass the products
-    return render(request, 'fruits.html', {'fruit_products': fruit_products})
+    return render(request, 'fruits.html', {'fruit_products': fruit_products, 'search_query': query})
 
 def product_detail(request, product_id):
     # Fetch the specific product based on the provided product_id
@@ -397,3 +404,7 @@ def login_view(request):
     
     return render(request, 'login.html', {'form': form})
 
+def search_results(request):
+    query = request.GET.get('q', '')
+    products = Organic_Product.objects.filter(name__icontains=query)
+    return render(request, 'search_results.html', {'products': products, 'query': query})

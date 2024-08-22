@@ -20,7 +20,7 @@ urlpatterns = [
     path('product/<int:product_id>/add-to-cart/', views.add_to_cart, name='add-to-cart'), 
     path('remove-cart-item/', views.remove_cart_item, name='remove_cart_item'),
     path('apply-coupon/', views.apply_coupon, name='apply_coupon'),
-
+    path('search/', views.search_results, name='search_results'),
     path('404/', views.error, name='error'),
 ]
 handler404 = 'myapp.views.error'

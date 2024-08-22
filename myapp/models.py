@@ -28,7 +28,8 @@ class Organic_Product(models.Model):
     )
     weight = models.CharField(max_length=50, null=True, blank=True)  # Weight with unit (e.g., "1 kg", "1 piece")
     country = models.CharField(max_length=255, null=True, blank=True)  # Country of origin
-
+    out_of_stock = models.BooleanField(default=False)
+    
     def __str__(self):
         return self.name
 
