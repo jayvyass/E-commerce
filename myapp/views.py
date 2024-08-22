@@ -20,8 +20,9 @@ def index(request):
     features = Feature.objects.all()[:4]
     discounts = Discount.objects.all()[:4]
     facts = Facts.objects.all()[:4]
-    banners  = Banner.objects.all()[:1]
+    banners = Banner.objects.all()[:1]
     reviews = Testimonial.objects.filter(rating__gt=3)[:6]
+
     # Get all products or filter by category
     if category == 'all':
         products = Organic_Product.objects.all()[4:12]  # Limit to 12 products
@@ -29,12 +30,14 @@ def index(request):
         products = Organic_Product.objects.filter(category='VEG')[:8]
     elif category == 'FRUIT':
         products = Organic_Product.objects.filter(category='FRUIT')[:8]
-    query = request.GET.get('q', '')
-    if query:
-        products = Organic_Product.objects.filter(name__icontains=query)
     else:
         products = Organic_Product.objects.all()[:12]
 
+    # Handle search query
+    query = request.GET.get('q', '')
+    if query:
+        products = Organic_Product.objects.filter(name__icontains=query)
+        
     return render(request, 'index.html', {
         'products': products,
         'category': category,
