@@ -140,9 +140,3 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# SMTP Mail
-EMAIL_HOST= 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'mailto:jayvyas0802@gmail.com'
-EMAIL_HOST_PASSWORD = 'meel ftuv cqhn xkby'
-EMAIL_USE_TLS = True

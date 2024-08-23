@@ -1,18 +1,16 @@
 from django.shortcuts import render, redirect , get_object_or_404
 from django.contrib import messages
-from .forms import ContactForm , TestimonialForm ,SubscribeForm, UserRegistrationForm , BillingDetailForm
-from .models import Organic_Product,Subscriber ,BillingDetail,Feature ,Coupon, Discount , Facts , Banner , Testimonial , CartItem
 from django.contrib.auth import login , logout
 from decimal import Decimal
-from django.http import JsonResponse , HttpResponseRedirect
-from django.views.decorators.http import require_POST
-from django.views.decorators.http import require_http_methods
+from django.http import JsonResponse 
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse
 import json
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.mail import send_mail
+
+from .forms import ContactForm , TestimonialForm ,SubscribeForm, UserRegistrationForm , BillingDetailForm
+from .models import Organic_Product,Subscriber ,BillingDetail,Feature ,Coupon, Discount , Facts , Banner , Testimonial , CartItem
 
 def index(request):
 
