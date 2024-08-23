@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CartItem, Coupon, BillingDetail, Contact, Organic_Product , Feature , Discount , Facts , Banner , Testimonial
+from .models import CartItem, Coupon, BillingDetail, Contact, Organic_Product , Feature , Discount , Facts , Banner , Testimonial , Subscriber
 
 # Registering Contact model
 @admin.register(Contact)
@@ -44,3 +44,7 @@ class CouponAdmin(admin.ModelAdmin):
 @admin.register(BillingDetail)
 class BillingAdmin(admin.ModelAdmin):
     list_display = ('id', 'products','subtotal','discount','total','user', 'country')
+
+@admin.register(Subscriber)
+class SubcriberAdmin(admin.ModelAdmin):
+    list_display =('email','subscribed_at')

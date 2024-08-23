@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect , get_object_or_404
 from django.contrib import messages
-from .forms import ContactForm , TestimonialForm , UserRegistrationForm , BillingDetailForm
-from .models import Organic_Product ,BillingDetail,Feature ,Coupon, Discount , Facts , Banner , Testimonial , CartItem
+from .forms import ContactForm , TestimonialForm ,SubscribeForm, UserRegistrationForm , BillingDetailForm
+from .models import Organic_Product,Subscriber ,BillingDetail,Feature ,Coupon, Discount , Facts , Banner , Testimonial , CartItem
 from django.contrib.auth import login , logout
 from decimal import Decimal
 from django.http import JsonResponse , HttpResponseRedirect
@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 import json
 from django.contrib.auth.forms import AuthenticationForm
-
+from django.core.mail import send_mail
 
 def index(request):
 
@@ -350,17 +350,29 @@ def checkout(request):
 
 
    
+
 def contact_view(request):
     if request.method == 'POST':
         form = ContactForm(request.POST)
         if form.is_valid():
             form.save()  # Save the form data to the database
+
+            # Sending confirmation email
+            user_email = form.cleaned_data.get('email')
+            send_mail(
+                subject='Thank You for Contacting Us!',
+                message = f"Dear {form.cleaned_data.get('name')},\n\nThank you for reaching out. We have received your message and will get back to you shortly.\n\nBest regards,\nFruitables",
+                from_email='jayvyas0802@gmail.com',  # Change this to your email or DEFAULT_FROM_EMAIL
+                recipient_list=[user_email],
+                fail_silently=False,
+            )
+
             messages.success(request, 'Your message has been sent successfully. Thank you for reaching out to us!')
-            return redirect('contact')  # Redirect to the same page or another page after successful submission
+            return redirect('contact')
     else:
         form = ContactForm()
-
-    return render(request, 'contact.html', {'form': form})
+        subscribe_form = SubscribeForm()
+    return render(request, 'contact.html', {'form': form,'subscribe_form':subscribe_form})
 
 def testimonial(request):
     reviews = Testimonial.objects.filter(rating__gt=3)[:6]
@@ -411,3 +423,30 @@ def search_results(request):
     query = request.GET.get('q', '')
     products = Organic_Product.objects.filter(name__icontains=query)
     return render(request, 'search_results.html', {'products': products, 'query': query})
+
+def subscribe_view(request):
+    if request.method == 'POST':
+        form = SubscribeForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            
+            # Save the email to the Subscriber table
+            Subscriber.objects.create(email=email)
+            
+            # Send a confirmation email to the user
+            send_mail(
+                subject='Thank you for subscribing!',
+                message=f"Thank you for subscribing to our newsletter! We will keep you updated with the latest news and updates.\n\nRegards\nFruitables",
+                from_email='your_email@example.com',  # Replace with your email
+                recipient_list=[email],
+                fail_silently=False,
+            )
+            
+            messages.success(request, 'Thank you for subscribing! A confirmation email has been sent to your email address.')
+            return redirect('subscribe')
+    else:
+        form = SubscribeForm()
+
+    return redirect(request.META.get('HTTP_REFERER', 'index'))
+
+

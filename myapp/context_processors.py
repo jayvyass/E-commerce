@@ -1,6 +1,12 @@
 # myapp/context_processors.py
 
 from .models import CartItem
+from .forms import SubscribeForm
+
+def global_context(request):
+    return {
+        'subscribe_form': SubscribeForm()
+    }
 
 def cart_item_count(request):
     """Return the total quantity of items in the user's cart."""

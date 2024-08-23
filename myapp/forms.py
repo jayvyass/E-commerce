@@ -1,5 +1,5 @@
 from django import forms
-from .models import Contact , Testimonial , BillingDetail
+from .models import Contact , Testimonial , BillingDetail ,Subscriber
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
@@ -138,3 +138,13 @@ class BillingDetailForm(forms.ModelForm):
                 'spellcheck': 'false',
             }),
         }
+
+class SubscribeForm(forms.Form):
+    model = Subscriber
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control border-0 py-3 px-3 rounded-pill',
+            'placeholder': 'Your Email'
+        }),
+        required=True,
+    )

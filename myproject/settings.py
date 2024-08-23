@@ -71,7 +71,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',  # Ensure this is included
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                 'myapp.context_processors.cart_item_count',
+                'myapp.context_processors.cart_item_count',
+                'myapp.context_processors.global_context'
             ],
         },
     },
@@ -137,3 +138,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# SMTP Mail
+EMAIL_HOST= 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'mailto:jayvyas0802@gmail.com'
+EMAIL_HOST_PASSWORD = 'meel ftuv cqhn xkby'
+EMAIL_USE_TLS = True

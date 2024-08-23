@@ -125,3 +125,11 @@ class BillingDetail(models.Model):
     created_at = models.DateTimeField(auto_now_add=True) 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+
+
+class Subscriber(models.Model):
+    email = models.EmailField(unique=True)
+    subscribed_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.email

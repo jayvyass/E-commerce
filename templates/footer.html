@@ -11,8 +11,9 @@
                     </a>
                 </div>
                 <div class="col-lg-7">
-                    <form id="subscribe-form" class="d-flex justify-content-center align-items-center position-relative">
-                        <input id="email-input" class="form-control border-0 py-3 px-3 rounded-pill" type="email" placeholder="Your Email" required>
+                    <form id="subscribe-form" action="{% url 'subscribe' %}" method="post" class="d-flex justify-content-center align-items-center position-relative">
+                        {% csrf_token %}
+                        {{ subscribe_form.email }}
                         <button type="submit" class="btn btn-primary border-0 py-1 px-2 rounded-pill text-white ms-2">Subscribe Now</button>
                     </form>
                 </div>
