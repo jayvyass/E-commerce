@@ -112,7 +112,6 @@ def add_to_cart(request, product_id):
 
 
 
-
 @login_required(login_url='login')
 @csrf_exempt
 def update_cart_quantity(request):

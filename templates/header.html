@@ -1,87 +1,87 @@
 {% load static %}
 
-        <!-- Spinner Start -->
-        <div id="spinner" class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50  d-flex align-items-center justify-content-center">
-            <div class="spinner-grow text-primary" role="status"></div>
-        </div>
-        <!-- Spinner End -->
+<!-- Spinner Start -->
+<div id="spinner" class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50  d-flex align-items-center justify-content-center">
+    <div class="spinner-grow text-primary" role="status"></div>
+</div>
+<!-- Spinner End -->
 
 
-        <!-- Navbar start -->
-        <div class="container-fluid fixed-top">
-            <div class="container px-0">
-                <nav class="navbar navbar-light bg-white navbar-expand-xl">
-                    <a href="{% url 'index' %}" class="navbar-brand">
-                        <h1 class="text-primary display-5 mb-0">Fruitables</h1>
-                        <p class="text-secondary mb-0">From Farm to Your Family</p>
-                    </a>
-                    <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-                        <span class="fa fa-bars text-primary"></span>
-                    </button>
-                    <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
-                        <div class="navbar-nav mx-auto">
-                            <a href="{% url 'index' %}" class="nav-item nav-link {% if request.path == '/' %}active{% endif %}">Home</a>
-                            <a href="{% url 'fruits' %}" class="nav-item nav-link {% if request.path == '/fruits/' %}active{% endif %}">Fruits</a>
-                            <a href="{% url 'vegetable' %}" class="nav-item nav-link {% if request.path == '/vegetable/' %}active{% endif %}">Vegetables</a>
-                            <a href="{% url 'cart' %}" class="nav-item nav-link {% if request.path == '/cart/' %}active{% endif %}">Cart</a>
-                            <div class="nav-item dropdown">
-                                <a href="#" class="nav-link dropdown-toggle {% if request.path == '/contact/' or request.path == '/testimonial/' or request.path == '/error/' %}active{% endif %}" data-bs-toggle="dropdown">Pages</a>
-                                <div class="dropdown-menu m-0 bg-secondary rounded-0">
-                                    <a href="{% url 'contact' %}" class="dropdown-item {% if request.path == '/contact/' %}active{% endif %}">Contact</a>
-                                    <a href="{% url 'testimonial' %}" class="dropdown-item {% if request.path == '/testimonial/' %}active{% endif %}">Testimonial</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="d-flex m-3 me-0">
-                            {% if request.path == '/' or request.path == '/fruits/' or request.path == '/vegetable/' %}
-                            <button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search text-primary"></i></button>
-                            {% endif %}
-                            {% if user.is_authenticated %}
-                            <a href="{% url 'cart' %}" class="position-relative me-4 my-auto">
-                                <i class="fa fa-shopping-bag fa-2x"></i>
-                                <span class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style="top: -5px; left: 15px; height: 20px; min-width: 20px;">
-                                    {{ cart_item_count }}
-                                </span>
-                            </a>
-                            
-                                <!-- Logout Link -->
-                                <a href="{% url 'logout' %}" class="my-auto">
-                                    <i class="fas fa-sign-out-alt fa-2x"></i>
-                                </a>
-                            {% else %}
-                                <!-- Register Link -->
-                                <a href="{% url 'register' %}" class="my-auto">
-                                    <i class="fas fa-user fa-2x"></i>
-                                </a>
-                            {% endif %}
-                        </div>
-                    </div>
-                </nav>
-            </div>
-        </div>
-        <!-- Navbar End -->
-
-
-
-        {% if request.path == '/' or request.path == '/fruits/' or request.path == '/vegetable/' %}
-            <!-- Modal Search Start -->
-            <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-fullscreen">
-                    <div class="modal-content rounded-0">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Search by keyword</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body d-flex align-items-center">
-                            <form method="GET" action="{% if request.path == '/' %}{% url 'index' %}{% elif request.path == '/fruits/' %}{% url 'fruits' %}{% elif request.path == '/vegetable/' %}{% url 'vegetable' %}{% endif %}" class="w-75 mx-auto d-flex">
-                                <input type="search" name="q" class="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1" value="{{ request.GET.q }}">
-                                <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
-                                <button type="submit" class="btn btn-primary d-none">Search</button>
-                            </form>
+<!-- Navbar start -->
+<div class="container-fluid fixed-top">
+    <div class="container px-0">
+        <nav class="navbar navbar-light bg-white navbar-expand-xl">
+            <a href="{% url 'index' %}" class="navbar-brand">
+                <h1 class="text-primary display-5 mb-0">Fruitables</h1>
+                <p class="text-secondary mb-0">From Farm to Your Family</p>
+            </a>
+            <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="fa fa-bars text-primary"></span>
+            </button>
+            <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
+                <div class="navbar-nav mx-auto">
+                    <a href="{% url 'index' %}" class="nav-item nav-link {% if request.path == '/' %}active{% endif %}">Home</a>
+                    <a href="{% url 'fruits' %}" class="nav-item nav-link {% if request.path == '/fruits/' %}active{% endif %}">Fruits</a>
+                    <a href="{% url 'vegetable' %}" class="nav-item nav-link {% if request.path == '/vegetable/' %}active{% endif %}">Vegetables</a>
+                    <a href="{% url 'cart' %}" class="nav-item nav-link {% if request.path == '/cart/' %}active{% endif %}">Cart</a>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle {% if request.path == '/contact/' or request.path == '/testimonial/' or request.path == '/error/' %}active{% endif %}" data-bs-toggle="dropdown">Pages</a>
+                        <div class="dropdown-menu m-0 bg-secondary rounded-0">
+                            <a href="{% url 'contact' %}" class="dropdown-item {% if request.path == '/contact/' %}active{% endif %}">Contact</a>
+                            <a href="{% url 'testimonial' %}" class="dropdown-item {% if request.path == '/testimonial/' %}active{% endif %}">Testimonial</a>
                         </div>
                     </div>
                 </div>
+                <div class="d-flex m-3 me-0">
+                    {% if request.path == '/' or request.path == '/fruits/' or request.path == '/vegetable/' %}
+                    <button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search text-primary"></i></button>
+                    {% endif %}
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'cart' %}" class="position-relative me-4 my-auto">
+                        <i class="fa fa-shopping-bag fa-2x"></i>
+                        <span class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style="top: -5px; left: 15px; height: 20px; min-width: 20px;">
+                            {{ cart_item_count }}
+                        </span>
+                    </a>
+                    
+                        <!-- Logout Link -->
+                        <a href="{% url 'logout' %}" class="my-auto">
+                            <i class="fas fa-sign-out-alt fa-2x"></i>
+                        </a>
+                    {% else %}
+                        <!-- Register Link -->
+                        <a href="{% url 'register' %}" class="my-auto">
+                            <i class="fas fa-user fa-2x"></i>
+                        </a>
+                    {% endif %}
+                </div>
             </div>
-            <!-- Modal Search End -->
+        </nav>
+    </div>
+</div>
+<!-- Navbar End -->
 
-        {% endif %}
+
+
+{% if request.path == '/' or request.path == '/fruits/' or request.path == '/vegetable/' %}
+    <!-- Modal Search Start -->
+<div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content rounded-0">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Search by keyword</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex align-items-center">
+                <form method="GET" action="{% if request.path == '/' %}{% url 'index' %}{% elif request.path == '/fruits/' %}{% url 'fruits' %}{% elif request.path == '/vegetable/' %}{% url 'vegetable' %}{% endif %}" class="w-75 mx-auto d-flex">
+                    <input type="search" name="q" class="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1" value="{{ request.GET.q }}">
+                    <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
+                    <button type="submit" class="btn btn-primary d-none">Search</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Search End -->
+
+{% endif %}

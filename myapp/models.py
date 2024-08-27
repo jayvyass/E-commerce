@@ -29,7 +29,8 @@ class Organic_Product(models.Model):
     weight = models.CharField(max_length=50, null=True, blank=True)  # Weight with unit (e.g., "1 kg", "1 piece")
     country = models.CharField(max_length=255, null=True, blank=True)  # Country of origin
     out_of_stock = models.BooleanField(default=False)
-    
+    created_at = models.DateTimeField(auto_now_add=True) 
+
     def __str__(self):
         return self.name
 
@@ -40,6 +41,7 @@ class CartItem(models.Model):
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     discount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    created_at = models.DateTimeField(auto_now_add=True) 
 
     def __str__(self):
         return f"{self.quantity} of {self.product.name}"
@@ -55,6 +57,7 @@ class Feature(models.Model):
     title = models.CharField(max_length=255)
     icon = models.CharField(max_length=255)  # Use a CharField for the icon as a text input
     description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True) 
 
     def __str__(self):
         return self.title    
@@ -64,6 +67,7 @@ class Discount(models.Model):
     title = models.CharField(max_length=255)
     image = models.ImageField(upload_to='discounts/images/')  # Field for uploading images
     description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True) 
 
     def __str__(self):
         return self.title
@@ -73,6 +77,7 @@ class Facts(models.Model):
     title = models.CharField(max_length=255)
     icon = models.CharField(max_length=255)  # Field for storing icon names or paths
     information = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True) 
 
     def __str__(self):
         return self.title
@@ -84,6 +89,7 @@ class Banner(models.Model):
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)  # Field for price
     quantity = models.PositiveIntegerField()  # Field for quantity
+    created_at = models.DateTimeField(auto_now_add=True) 
 
     def __str__(self):
         return self.title    
@@ -94,6 +100,7 @@ class Testimonial(models.Model):
     email = models.EmailField()  # Field for the email of the person giving the testimonial
     review = models.TextField()  # Field for the testimonial review
     rating = models.PositiveIntegerField()  # Field for rating (ensure it is an integer)
+    created_at = models.DateTimeField(auto_now_add=True) 
 
     def __str__(self):
         return f"Testimonial by {self.name}"
@@ -103,6 +110,7 @@ class Coupon(models.Model):
     coupon_id = models.AutoField(primary_key=True)  # Primary key field
     coupon_name = models.CharField(max_length=255)  # Field for the name of the coupon
     discount_percentage = models.DecimalField(max_digits=5, decimal_places=2)  # Field for the discount percentage
+    created_at = models.DateTimeField(auto_now_add=True) 
 
     def __str__(self):
         return f"Coupon: {self.coupon_name} - {self.discount_percentage}%"
@@ -123,6 +131,7 @@ class BillingDetail(models.Model):
     discount = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     products = JSONField(default=dict) 
     created_at = models.DateTimeField(auto_now_add=True) 
+    
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
