@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+    <style>
+        /* General styles */
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .invoice-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px;
+            border-radius: 8px;
+            background: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            text-align: center;
+        }
+        h3 {
+            font-size: 18px;
+            margin-top: 20px;
+            color: #34495e;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        p {
+            margin: 5px 0;
+            line-height: 1.6;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table thead th {
+            background: #3498db;
+            color: #ffffff;
+            font-size: 16px;
+            padding: 10px;
+            text-align: left;
+        }
+        table tbody td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            font-size: 14px;
+        }
+        table tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .num {
+            font-weight: bold;
+        }
+        .highlight {
+            background: #eaf4f4;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        <h1>Fruitables Invoice</h1>
+        <p>Hello, {{ billing_detail.user.username }}.<br>
+           Thank you for your order.</p>
+        <p>Order #{{ billing_detail.id }}<br>
+           {{ billing_detail.created_at|date:"F d, Y" }}</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item_name, quantity in billing_detail.products.items %}
+                <tr>
+                    <td>{{ item_name }}</td>
+                    <td>{{ quantity }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <table>
+            <tr class="highlight">
+                <td class="num">Subtotal</td>
+                <td class="text-right">${{ billing_detail.subtotal|floatformat:2 }}</td>
+            </tr>
+            <tr>
+                <td class="num">Discount</td>
+                <td class="text-right">${{ billing_detail.discount|floatformat:2 }}</td>
+            </tr>
+            <tr class="highlight">
+                <td class="num">Total</td>
+                <td class="text-right">${{ billing_detail.total|floatformat:2 }}</td>
+            </tr>
+        </table>
+        <h3>Billing Information</h3>
+        <p>{{ billing_detail.first_name }} {{ billing_detail.last_name }}<br>
+           {{ billing_detail.address }}<br>
+           {{ billing_detail.town_city }} {{ billing_detail.postcode_zip }}<br>
+           {{ billing_detail.country }}<br>
+           Mobile: {{ billing_detail.mobile }}<br>
+           Email: {{ billing_detail.email }}
+        </p>
+    </div>
+</body>
+</html>

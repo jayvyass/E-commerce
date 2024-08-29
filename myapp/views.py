@@ -7,69 +7,103 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 import json
 from django.contrib.auth.forms import AuthenticationForm
-from django.core.mail import send_mail
+from django.core.mail import send_mail , EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.conf import settings
+import logging
 
 from .forms import ContactForm , TestimonialForm ,SubscribeForm, UserRegistrationForm , BillingDetailForm
-from .models import Organic_Product,Subscriber ,BillingDetail,Feature ,Coupon, Discount , Facts , Banner , Testimonial , CartItem
+from .models import Products,Category1,Category2,Subscriber ,BillingDetail,Feature ,Coupon, Discount , Facts , Banner , Testimonial , CartItem
+
+logger = logging.getLogger(__name__)
 
 def index(request):
+    category_name = request.GET.get('category', 'all')
+    query = request.GET.get('q', '')
 
-    category = request.GET.get('category', 'all')
+    # Fetch common data
     features = Feature.objects.all()[:4]
     discounts = Discount.objects.all()[:4]
     facts = Facts.objects.all()[:4]
     banners = Banner.objects.all()[:1]
     reviews = Testimonial.objects.filter(rating__gt=3)[:6]
 
-    # Get all products or filter by category
-    if category == 'all':
-        products = Organic_Product.objects.all()[4:12]  # Limit to 12 products
-    elif category == 'VEG':
-        products = Organic_Product.objects.filter(category='VEG')[:8]
-    elif category == 'FRUIT':
-        products = Organic_Product.objects.filter(category='FRUIT')[:8]
+    # Fetch Category1 instances for filtering
+    categories = Category1.objects.all()
+
+    # Determine category filter
+    if category_name == 'all':
+        products = Products.objects.all()
     else:
-        products = Organic_Product.objects.all()[:12]
+        category1 = Category1.objects.filter(name=category_name).first()
+        if category1:
+            products = Products.objects.filter(category1=category1)
+        else:
+            products = Products.objects.all()  # Fallback in case of invalid category
 
     # Handle search query
-    query = request.GET.get('q', '')
     if query:
-        products = Organic_Product.objects.filter(name__icontains=query)
-        
+        products = products.filter(name__icontains=query)
+
+    # Limit the number of products displayed
+    products = products[4:12]  # Adjust the slice as needed
+
+    # Fetch products based on fixed categories (e.g., Vegetables and Fruits)
+    vegetable_category = Category1.objects.filter(name='Vegetables').first()
+    fruit_category = Category1.objects.filter(name='Fruits').first()
+
+    if vegetable_category:
+        vegetable_products = Products.objects.filter(category1=vegetable_category)[:7]
+    else:
+        vegetable_products = Products.objects.none()  # No vegetables found
+
+    if fruit_category:
+        fruit_products = Products.objects.filter(category1=fruit_category)[:7]  # Adjust as needed
+    else:
+        fruit_products = Products.objects.none()  # No fruits found
+
     return render(request, 'index.html', {
         'products': products,
-        'category': category,
+        'categories': categories,
+        'category': category_name,
         'features': features,
         'discounts': discounts,
         'facts': facts,
         'banners': banners,
         'reviews': reviews,
+        'vegetables': vegetable_products,
+        'fruits': fruit_products
     })
+
 
 def vegetable(request):
     query = request.GET.get('q', '')
+    category1_id = Category1.objects.filter(name='Vegetables').first().id
+    
     if query:
-        vegetable_products = Organic_Product.objects.filter(category='VEG', name__icontains=query)[:20]
+        vegetable_products = Products.objects.filter(category1_id=category1_id, name__icontains=query)[:20]
     else:
-        vegetable_products = Organic_Product.objects.filter(category='VEG')[:20]
+        vegetable_products = Products.objects.filter(category1_id=category1_id)[:20]
 
     return render(request, 'vegetable.html', {'vegetable_products': vegetable_products, 'search_query': query})
 
-
 def fruits(request):
     query = request.GET.get('q', '')
+    category1_id = Category1.objects.filter(name='Fruits').first().id
+    
     if query:
-        fruit_products = Organic_Product.objects.filter(category='FRUIT', name__icontains=query)[:20]
+        fruit_products = Products.objects.filter(category1_id=category1_id, name__icontains=query)[:20]
     else:
-        fruit_products = Organic_Product.objects.filter(category='FRUIT')[:20]
+        fruit_products = Products.objects.filter(category1_id=category1_id)[:20]
 
     return render(request, 'fruits.html', {'fruit_products': fruit_products, 'search_query': query})
 
 def product_detail(request, product_id):
     # Fetch the specific product based on the provided product_id
-    product = get_object_or_404(Organic_Product, product_id=product_id)
-    # Fetch related products based on some criteria, e.g., same category
-    related_products = Organic_Product.objects.filter(category=product.category).exclude(product_id=product_id)[:4]
+    product = get_object_or_404(Products, product_id=product_id)
+    category = product.category1
+    related_products = Products.objects.filter(category1=category).exclude(product_id=product_id)[:4]
     reviews = Testimonial.objects.filter(rating__gt=3).order_by('?')[:2]
 
     if request.method == 'POST':
@@ -89,7 +123,7 @@ def product_detail(request, product_id):
 
 @login_required(login_url='login')
 def add_to_cart(request, product_id):
-    product = get_object_or_404(Organic_Product, product_id=product_id)
+    product = get_object_or_404(Products, product_id=product_id)
     cart_item, created = CartItem.objects.get_or_create(
         user=request.user,
         product=product,
@@ -309,6 +343,26 @@ def checkout(request):
             billing_detail.products = products
             billing_detail.save() 
            
+            invoice_html = render_to_string('invoice.html', {
+                'billing_detail': billing_detail,
+                'products': products,
+                'subtotal': billing_detail.subtotal,
+                'discount': billing_detail.discount,
+                'total': billing_detail.total
+            })
+
+            # Convert HTML to plain text
+            invoice_plain = strip_tags(invoice_html)
+
+            # Create and send the email
+            email = EmailMultiAlternatives(
+                subject='Your Invoice from Our Store',
+                body=invoice_plain,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                to= [billing_detail.email],
+            )
+            email.attach_alternative(invoice_html, "text/html")
+            email.send()
 
             messages.success(request, 'Transaction completed successfully!')
             CartItem.objects.filter(user=request.user).delete()
@@ -345,8 +399,6 @@ def checkout(request):
     })
 
 
-
-   
 
 def contact_view(request):
     if request.method == 'POST':
@@ -418,7 +470,7 @@ def login_view(request):
 
 def search_results(request):
     query = request.GET.get('q', '')
-    products = Organic_Product.objects.filter(name__icontains=query)
+    products = Products.objects.filter(name__icontains=query)
     return render(request, 'search_results.html', {'products': products, 'query': query})
 
 def subscribe_view(request):

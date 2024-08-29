@@ -10,22 +10,32 @@ class Contact(models.Model):
 
     def __str__(self):
         return self.name
+
+class Category1(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+class Category2(models.Model):
+    name = models.CharField(max_length=255)
+    parent_category = models.ForeignKey(Category1, on_delete=models.CASCADE, related_name='subcategories')
+
+    def __str__(self):
+        return self.name
     
-class Organic_Product(models.Model):
-    PRODUCT_CATEGORY_CHOICES = [
-        ('VEG', 'Vegetable'),
-        ('FRUIT', 'Fruit'),
-    ]
+    def get_full_category_name(self):
+        return f"{self.parent_category.name} > {self.name}"
+
+class Products(models.Model):
+    
     product_id = models.AutoField(primary_key=True)  
     name = models.CharField(max_length=255)
     image = models.ImageField(upload_to='products/images/')
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    category = models.CharField(
-        max_length=5,
-        choices=PRODUCT_CATEGORY_CHOICES,
-        default='FRUIT',  # Default to 'Fruit'
-    )
+    category1 = models.ForeignKey(Category1, on_delete=models.SET_NULL, null=True, blank=True)
+    category2 = models.ForeignKey(Category2, on_delete=models.SET_NULL, null=True, blank=True)
     weight = models.CharField(max_length=50, null=True, blank=True)  # Weight with unit (e.g., "1 kg", "1 piece")
     country = models.CharField(max_length=255, null=True, blank=True)  # Country of origin
     out_of_stock = models.BooleanField(default=False)
@@ -36,7 +46,7 @@ class Organic_Product(models.Model):
 
 class CartItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    product = models.ForeignKey('Organic_Product', on_delete=models.CASCADE)
+    product = models.ForeignKey('Products', on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
@@ -137,8 +147,9 @@ class BillingDetail(models.Model):
 
 
 class Subscriber(models.Model):
-    email = models.EmailField(unique=True)
+    email = models.EmailField(unique=False)
     subscribed_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.email
+

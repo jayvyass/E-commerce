@@ -5,11 +5,11 @@
 
 <!-- Single Page Header start -->
 <div class="container-fluid page-header py-5">
-    <h1 class="text-center text-white display-6">Vegatable</h1>
+    <h1 class="text-center text-white display-6">Vegatables</h1>
     <ol class="breadcrumb justify-content-center mb-0">
         <li class="breadcrumb-item"><a href="#">Home</a></li>
         <li class="breadcrumb-item"><a href="#">Pages</a></li>
-        <li class="breadcrumb-item active text-white">Vegatable</li>
+        <li class="breadcrumb-item active text-white">Vegatables</li>
     </ol>
 </div>
 <!-- Single Page Header End -->
@@ -25,20 +25,20 @@
                 <div class="col-md-7 col-lg-6 col-xl-3 mb-4"> <!-- Margin-bottom for spacing between rows -->
                     <div class="rounded position-relative fruite-item" style="overflow: hidden; width: 220px; height: 400px;">
                         <a href="{% url 'product-detail' product.product_id %}">
-                        <div class="fruite-img" style="height: 200px; overflow: hidden;">
-                            <img src="{{ product.image.url }}" class="img-fluid w-100" alt="{{ product.name }}" style="height: 100%; object-fit: cover;">
-                        </div>
-                        <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">{{ product.category }}</div>
-                        <div class="p-4 border border-secondary border-top-0 rounded-bottom" style="height: 200px;">
-                            <h4 style="font-size: 1.25rem; margin-bottom: 10px;">{{ product.name }}</h4>
-                            <p style="font-size: 0.875rem; color: #6c757d; margin-bottom: 15px; height: 50px; overflow: hidden;">{{ product.description }}</p>
-                            <div class="d-flex justify-content-center flex-lg-wrap">
-                                <p class="text-dark fs-5 fw-bold mb-1">${{ product.price }} / {{ product.weight }}</p>
-                                <a href="{% url 'product-detail' product.product_id %}" class="btn border border-secondary rounded-pill px-3 text-primary">
-                                    <i class="fa fa-plus-circle me-2 text-primary"></i> View More
-                                </a>
+                            <div class="fruite-img" style="height: 200px; overflow: hidden;">
+                                <img src="{{ product.image.url }}" class="img-fluid w-100" alt="{{ product.name }}" style="height: 100%; object-fit: cover;">
                             </div>
-                        </div>
+                            <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">{{ product.category1 }}</div>
+                            <div class="p-4 border border-secondary border-top-0 rounded-bottom" style="height: 200px;">
+                                <h4 style="font-size: 1.25rem; margin-bottom: 10px;">{{ product.name }}</h4>
+                                <p style="font-size: 0.875rem; color: #6c757d; margin-bottom: 15px; height: 50px; overflow: hidden;">{{ product.description }}</p>
+                                <div class="d-flex justify-content-center flex-lg-wrap">
+                                    <p class="text-dark fs-5 fw-bold mb-1">${{ product.price }} / {{ product.weight }}</p>
+                                    <a href="{% url 'product-detail' product.product_id %}" class="btn border border-secondary rounded-pill px-3 text-primary">
+                                        <i class="fa fa-plus-circle me-2 text-primary"></i> View More
+                                    </a>
+                                </div>
+                            </div>
                         </a>
                     </div>
                 </div>
