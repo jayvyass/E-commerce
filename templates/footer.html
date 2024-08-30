@@ -72,4 +72,28 @@
 
 
 <!-- Back to Top -->
-<a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>   
+<a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>
+<style>
+    /* Include the CSS here if not in an external file */
+    .back-to-top {
+        position: fixed;
+        left: 30px; /* Move the button to the left side */
+        bottom: 30px; /* Position it 30px from the bottom */
+        display: flex;
+        width: 45px;
+        height: 45px;
+        align-items: center;
+        justify-content: center;
+        transition: 0.5s;
+        z-index: 99;
+        border-radius: 50%; /* Keeps the button circular */
+      
+        text-decoration: none; /* Removes underline from link */
+        text-align: center; /* Center text/icon */
+        display: none; /* Initially hidden */
+    }
+    
+    .back-to-top i {
+        margin: 0; /* Remove margin around icon */
+    }
+</style>  
