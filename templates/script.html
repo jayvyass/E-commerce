@@ -19,29 +19,6 @@
         document.getElementById('vegetable-products').scrollIntoView({ behavior: 'smooth' });
     }
     {% comment %} for selecting  stars for testimonial {% endcomment %}
-        document.querySelectorAll('.fa-star').forEach(star => {
-            star.addEventListener('click', function() {
-                let selectedValue = parseInt(this.getAttribute('data-value'));
-                document.querySelectorAll('.fa-star').forEach(star => {
-                    let starValue = parseInt(star.getAttribute('data-value'));
-                    if (starValue <= selectedValue) {
-                        star.classList.add('text-warning');
-                        star.classList.remove('text-muted');
-                    } else {
-                        star.classList.add('text-muted');
-                        star.classList.remove('text-warning');
-                    }
-                });
-                document.getElementById('rating').value = selectedValue;
-                document.querySelectorAll('input[name="rating_star"]').forEach(checkbox => {
-                    checkbox.checked = parseInt(checkbox.value) === selectedValue;
-                });
-            });
-        });
-    
-        function submitRating() {
-            const rating = document.getElementById('rating').value;
-            console.log('Selected Rating:', rating); // Replace this with actual form submission code
-        }
+       
        
 </script>

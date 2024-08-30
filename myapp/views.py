@@ -12,6 +12,8 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
 import logging
+from io import BytesIO
+from xhtml2pdf import pisa
 
 from .forms import ContactForm , TestimonialForm ,SubscribeForm, UserRegistrationForm , BillingDetailForm
 from .models import Products,Category1,Category2,Subscriber ,BillingDetail,Feature ,Coupon, Discount , Facts , Banner , Testimonial , CartItem
@@ -353,6 +355,7 @@ def checkout(request):
 
             # Convert HTML to plain text
             invoice_plain = strip_tags(invoice_html)
+            pdf_attachment = render_to_pdf(invoice_html)
 
             # Create and send the email
             email = EmailMultiAlternatives(
@@ -362,6 +365,10 @@ def checkout(request):
                 to= [billing_detail.email],
             )
             email.attach_alternative(invoice_html, "text/html")
+            
+            if pdf_attachment:
+                email.attach('invoice.pdf', pdf_attachment, 'application/pdf')
+
             email.send()
 
             messages.success(request, 'Transaction completed successfully!')
@@ -498,4 +505,9 @@ def subscribe_view(request):
 
     return redirect(request.META.get('HTTP_REFERER', 'index'))
 
-
+def render_to_pdf(html_content):
+    result = BytesIO()
+    pdf = pisa.CreatePDF(BytesIO(html_content.encode("UTF-8")), dest=result)
+    if pdf.err:
+        return None
+    return result.getvalue()
