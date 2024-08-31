@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'myapp',
     'tailwind',
     'theme',
-    'django_browser_reload'
+    'django_browser_reload',
+    'rest_framework',
 ]
 
 TAILWIND_APP_NAME = 'theme'
@@ -148,3 +149,15 @@ EMAIL_HOST_USER = 'mailto:jayvyas0802@gmail.com'
 EMAIL_HOST_PASSWORD = 'meel ftuv cqhn xkby'
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'jayvyas0802@gmail.com'
+
+# REST
+# REST_FRAMEWORK = {
+#     # Use Django's standard `django.contrib.auth` permissions,
+#     # or allow read-only access for unauthenticated users.
+#     'DEFAULT_PERMISSION_CLASSES': [
+#         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+#     ],
+#     'DEFAULT_RENDERER_CLASSES' : [
+#         'rest_framework.renderers.JSONRenderer',
+#     ]
+# }

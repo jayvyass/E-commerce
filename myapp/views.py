@@ -14,6 +14,10 @@ from django.conf import settings
 import logging
 from io import BytesIO
 from xhtml2pdf import pisa
+from rest_framework import generics
+from .serializers import ProductSerializer
+from .decorators import unauthenticated_user
+from rest_framework.permissions import IsAdminUser
 
 from .forms import ContactForm , TestimonialForm ,SubscribeForm, UserRegistrationForm , BillingDetailForm
 from .models import Products,Category1,Category2,Subscriber ,BillingDetail,Feature ,Coupon, Discount , Facts , Banner , Testimonial , CartItem
@@ -448,6 +452,7 @@ def logout_view(request):
     logout(request)
     return redirect('index')
 
+@unauthenticated_user
 def register(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
@@ -462,6 +467,7 @@ def register(request):
 
     return render(request, 'register.html', {'form': form})
 
+@unauthenticated_user
 def login_view(request):
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)
@@ -511,3 +517,14 @@ def render_to_pdf(html_content):
     if pdf.err:
         return None
     return result.getvalue()
+
+
+class ProductListView(generics.ListAPIView):
+    queryset = Products.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = [IsAdminUser] 
+
+class ProductDetailView(generics.RetrieveDestroyAPIView):
+    queryset = Products.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = [IsAdminUser] 
