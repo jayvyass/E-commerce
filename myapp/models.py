@@ -136,9 +136,9 @@ class BillingDetail(models.Model):
     mobile = models.CharField(max_length=15)
     email = models.EmailField()
     order_notes = models.TextField(blank=True, null=True)
-    total = models.DecimalField(max_digits=10, decimal_places=2) 
     subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     discount = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
+    total = models.DecimalField(max_digits=10, decimal_places=2) 
     products = JSONField(default=dict) 
     created_at = models.DateTimeField(auto_now_add=True) 
     

@@ -338,6 +338,12 @@ def apply_coupon(request):
 
 @login_required(login_url='login')
 def checkout(request):
+    # Check if cart is empty
+    cart_items = CartItem.objects.filter(user=request.user)
+    if not cart_items.exists():
+        messages.error(request, 'Your cart is empty. Please add items to your cart before proceeding to checkout.')
+        return redirect('cart')  # Redirect to your cart page
+
     previous_billing_detail = BillingDetail.objects.filter(user=request.user).first()
 
     if request.method == 'POST':
@@ -357,8 +363,8 @@ def checkout(request):
                     products[product_name] = product_quantity
 
             billing_detail.products = products
-            billing_detail.save() 
-           
+            billing_detail.save()
+
             invoice_html = render_to_string('invoice.html', {
                 'billing_detail': billing_detail,
                 'products': products,
@@ -376,7 +382,7 @@ def checkout(request):
                 subject='Your Invoice from Our Store',
                 body=invoice_plain,
                 from_email=settings.DEFAULT_FROM_EMAIL,
-                to= [billing_detail.email],
+                to=[billing_detail.email],
             )
             email.attach_alternative(invoice_html, "text/html")
             
@@ -396,7 +402,6 @@ def checkout(request):
         else:
             form = BillingDetailForm()
 
-    cart_items = CartItem.objects.filter(user=request.user)
     subtotal = sum(item.subtotal for item in cart_items)
     discount = sum(item.discount for item in cart_items)
     total = sum(item.total for item in cart_items)

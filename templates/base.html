@@ -49,13 +49,13 @@
                     duration: 3000,
                     gravity: "top",
                     position: "center",
-                    backgroundColor: "#4CAF50",
+                    backgroundColor: "{% if 'error' in message.tags %}#f44336{% else %}#4CAF50{% endif %}",
                     style: {
                         marginTop: "50px"  
                     }
                 }).showToast();
             {% endfor %}
-        });    
-    </script>
+        });
+        </script>        
 {% endif %}
 </html>

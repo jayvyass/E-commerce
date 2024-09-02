@@ -64,7 +64,7 @@ def export_products_csv(modeladmin, request, queryset):
     response['Content-Disposition'] = 'attachment; filename="products.csv"'
     
     writer = csv.writer(response)
-    writer.writerow(['Product ID', 'Name', 'Price', 'Weight', 'Country', 'Categories', 'Out of Stock', 'Created At'])
+    writer.writerow(['Name', 'Price', 'Weight', 'Country', 'Categories', 'Out of Stock'])
     
     for product in queryset:
         if product.category2 and product.category1:
@@ -75,14 +75,12 @@ def export_products_csv(modeladmin, request, queryset):
             category_display = 'N/A'
         
         writer.writerow([
-            product.product_id,
             product.name,
             product.price,
             product.weight,
             product.country,
             category_display,
-            product.out_of_stock,
-            product.created_at
+            product.out_of_stock,           
         ])
     
     return response
@@ -95,18 +93,17 @@ def export_billing_csv(modeladmin, request, queryset):
     response['Content-Disposition'] = 'attachment; filename="billing_details.csv"'
     
     writer = csv.writer(response)
-    writer.writerow(['ID', 'Products', 'Subtotal', 'Discount', 'Total', 'User', 'Country', 'Created At'])
+    writer.writerow([ 'Products', 'Subtotal', 'Discount', 'Total', 'User', 'Country'])
     
     for billing in queryset:
         writer.writerow([
-            billing.id,
+           
             billing.products,
             billing.subtotal,
             billing.discount,
             billing.total,
             billing.user,
             billing.country,
-            billing.created_at
         ])
     return response
 export_billing_csv.short_description = "Export Selected Billing Details as CSV"
