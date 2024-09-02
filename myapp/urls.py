@@ -26,6 +26,9 @@ urlpatterns = [
 
     # API
     path('api/products/', views.ProductListView.as_view(), name='product-list'),
+    path('api/billing/', views.BillingDetailView.as_view(), name='Billing-list'),
     path('api/products/<int:pk>/', views.ProductDetailView.as_view(), name='product-detail'),
+    path('api/billing/<int:pk>/', views.BillingDetailListView.as_view(), name='Billing-detail'),
+
 ]
 handler404 = 'myapp.views.error'

@@ -15,7 +15,7 @@ import logging
 from io import BytesIO
 from xhtml2pdf import pisa
 from rest_framework import generics
-from .serializers import ProductSerializer
+from .serializers import ProductSerializer , BillingSerializer
 from .decorators import unauthenticated_user
 from rest_framework.permissions import IsAdminUser
 
@@ -60,12 +60,20 @@ def index(request):
     fruit_category = Category1.objects.filter(name='Fruits').first()
 
     if vegetable_category:
-        vegetable_products = Products.objects.filter(category1=vegetable_category)[:7]
+        vegetable_products = Products.objects.filter(category1=vegetable_category)
+        if query:
+            vegetable_products = vegetable_products.filter(name__icontains=query)[:7]
+        else:
+            vegetable_products = vegetable_products[:7]
     else:
         vegetable_products = Products.objects.none()  # No vegetables found
 
     if fruit_category:
-        fruit_products = Products.objects.filter(category1=fruit_category)[:7]  # Adjust as needed
+        fruit_products = Products.objects.filter(category1=fruit_category)
+        if query:
+            fruit_products = fruit_products.filter(name__icontains=query)[:7]
+        else:
+            fruit_products = fruit_products[:7]
     else:
         fruit_products = Products.objects.none()  # No fruits found
 
@@ -79,8 +87,10 @@ def index(request):
         'banners': banners,
         'reviews': reviews,
         'vegetables': vegetable_products,
-        'fruits': fruit_products
+        'fruits': fruit_products,
+        'query': query
     })
+
 
 
 def vegetable(request):
@@ -518,7 +528,7 @@ def render_to_pdf(html_content):
         return None
     return result.getvalue()
 
-
+# API 
 class ProductListView(generics.ListAPIView):
     queryset = Products.objects.all()
     serializer_class = ProductSerializer
@@ -528,3 +538,13 @@ class ProductDetailView(generics.RetrieveDestroyAPIView):
     queryset = Products.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [IsAdminUser] 
+
+class BillingDetailView(generics.ListAPIView):
+    queryset = BillingDetail.objects.all()
+    serializer_class = BillingSerializer
+    permission_classes = [IsAdminUser]     
+
+class BillingDetailListView(generics.RetrieveDestroyAPIView):
+    queryset = BillingDetail.objects.all()
+    serializer_class = BillingSerializer
+    permission_classes = [IsAdminUser]         
