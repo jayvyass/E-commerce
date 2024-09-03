@@ -2,6 +2,7 @@ from django.contrib import admin
 from .models import Category1,Category2, CartItem, Coupon, BillingDetail, Contact, Products , Feature , Discount , Facts , Banner , Testimonial , Subscriber
 import csv
 from django import forms
+from .forms import ProductForm
 from django.utils import timezone
 from django.http import HttpResponse
 from datetime import timedelta
@@ -130,50 +131,11 @@ class Category2Admin(admin.ModelAdmin):
     
     get_full_category_name.short_description = 'Category'
 
-    
-class ProductForm(forms.ModelForm):
-    category2 = forms.ModelChoiceField(
-        queryset=Category2.objects.all(),
-        label="Category2",
-        empty_label="Select Category",
-        widget=forms.Select
-    )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        # Set the initial queryset for category2 and display full category names
-        self.fields['category2'].queryset = Category2.objects.all()
-        self.fields['category2'].widget = forms.Select(
-            choices=[(cat.id, cat.get_full_category_name()) for cat in self.fields['category2'].queryset]
-        )
-
-        # If an instance exists (e.g., during form editing), set category1 based on category2
-        if self.instance and self.instance.pk:
-            if self.instance.category2:
-                self.fields['category1'].initial = self.instance.category2.parent_category
-
-    class Meta:
-        model = Products
-        fields = '__all__'
-        widgets = {
-            'category1': forms.HiddenInput(),  # Hide category1 field from the form
-        }
-
-    def clean(self):
-        cleaned_data = super().clean()
-        category2 = cleaned_data.get('category2')
-
-        if category2:
-            # Automatically set category1 based on the selected category2
-            cleaned_data['category1'] = category2.parent_category
-
-        return cleaned_data
 
 @admin.register(Products)
 class ProductAdmin(admin.ModelAdmin):
     form = ProductForm
-    list_display = ('name','category1', 'price', 'get_category2_display', 'out_of_stock')
+    list_display = ('product_id','name','category1', 'price', 'get_category2_display', 'out_of_stock')
     list_filter = ('category1',)
     search_fields = ('name', 'description')
     actions = [export_products_csv]
@@ -219,7 +181,7 @@ class CouponAdmin(admin.ModelAdmin):
 
 @admin.register(BillingDetail)
 class BillingAdmin(admin.ModelAdmin):
-    list_display = ('id','products','subtotal','discount','total','user', 'country', 'created_at')
+    list_display = ('user','subtotal','discount','total', 'country')
     actions = [export_billing_csv] 
     list_filter = (BillingDateFilter,  TotalAmountFilter) 
     

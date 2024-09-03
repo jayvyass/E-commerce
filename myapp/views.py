@@ -18,6 +18,9 @@ from rest_framework import generics
 from .serializers import ProductSerializer , BillingSerializer
 from .decorators import unauthenticated_user
 from rest_framework.permissions import IsAdminUser
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
 
 from .forms import ContactForm , TestimonialForm ,SubscribeForm, UserRegistrationForm , BillingDetailForm
 from .models import Products,Category1,Category2,Subscriber ,BillingDetail,Feature ,Coupon, Discount , Facts , Banner , Testimonial , CartItem
@@ -354,13 +357,17 @@ def checkout(request):
             billing_detail.total = request.POST.get('amount', 0)
             billing_detail.subtotal = Decimal(request.POST.get('subtotal', '0.00'))
             billing_detail.discount = Decimal(request.POST.get('discount', '0.00'))
-            products = {}
+            
+            products = []
             for key in request.POST.keys():
                 if key.startswith('product_name_'):
                     index = key.replace('product_name_', '')
                     product_name = request.POST.get(key)
                     product_quantity = request.POST.get(f'product_quantity_{index}', 0)
-                    products[product_name] = product_quantity
+                    products.append({
+                        'product_name': product_name,
+                        'quantity': product_quantity
+                    })
 
             billing_detail.products = products
             billing_detail.save()
@@ -534,22 +541,20 @@ def render_to_pdf(html_content):
     return result.getvalue()
 
 # API 
-class ProductListView(generics.ListAPIView):
+class ProductListView(generics.ListCreateAPIView):
     queryset = Products.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = [IsAdminUser] 
 
-class ProductDetailView(generics.RetrieveDestroyAPIView):
+class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Products.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = [IsAdminUser] 
 
-class BillingDetailView(generics.ListAPIView):
+class BillingDetailView(generics.ListCreateAPIView):
     queryset = BillingDetail.objects.all()
     serializer_class = BillingSerializer
-    permission_classes = [IsAdminUser]     
-
-class BillingDetailListView(generics.RetrieveDestroyAPIView):
+    
+class BillingDetailListView(generics.RetrieveUpdateDestroyAPIView):
     queryset = BillingDetail.objects.all()
     serializer_class = BillingSerializer
-    permission_classes = [IsAdminUser]         
+  
+
