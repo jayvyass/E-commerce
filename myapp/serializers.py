@@ -8,9 +8,73 @@ class BillingSerializer(serializers.ModelSerializer):
         fields = ['user','subtotal','discount','total','products','first_name','last_name','town_city','country','address','postcode_zip','mobile','email','order_notes']
 
 class ProductSerializer(serializers.ModelSerializer):
+    # These fields are used for output (GET requests)
+    category1 = serializers.CharField(source='category1.name', read_only=True)
+    category2 = serializers.CharField(source='category2.name', read_only=True)
+
+    # These fields are used for input (POST/PUT requests)
+    category1_name = serializers.CharField(write_only=True, required=False)
+    category2_name = serializers.CharField(write_only=True, required=False)
+
     class Meta:
         model = Products
-        fields = '__all__'
+        fields = [
+            'product_id', 'name', 'image', 'description', 'price', 'weight', 'country', 'out_of_stock',
+            'category1', 'category2',  # Output fields for GET
+            'category1_name', 'category2_name'  # Input fields for POST/PUT
+        ]
+
+    def validate(self, data):
+        # Handle category1_name_input to find the related category1
+        category1_name = data.pop('category1_name', None)
+        if category1_name:
+            try:
+                category1 = Category1.objects.get(name=category1_name)
+                data['category1'] = category1
+            except Category1.DoesNotExist:
+                raise serializers.ValidationError({"category1_name": "Category1 with this name does not exist."})
+
+        # Handle category2_name_input to find the related category2
+        category2_name = data.pop('category2_name', None)
+        if category2_name:
+            try:
+                category2 = Category2.objects.get(name=category2_name)
+                data['category2'] = category2
+            except Category2.DoesNotExist:
+                raise serializers.ValidationError({"category2_name": "Category2 with this name does not exist."})
+
+        return data
+
+    def create(self, validated_data):
+        # Use the validated data to create a new product instance
+        product = Products.objects.create(
+            name=validated_data.get('name'),
+            image=validated_data.get('image'),
+            description=validated_data.get('description'),
+            price=validated_data.get('price'),
+            weight=validated_data.get('weight'),
+            country=validated_data.get('country'),
+            out_of_stock=validated_data.get('out_of_stock'),
+            category1=validated_data.get('category1'),
+            category2=validated_data.get('category2')
+        )
+        return product
+
+    def update(self, instance, validated_data):
+        # Update the instance with the validated data
+        instance.name = validated_data.get('name', instance.name)
+        instance.image = validated_data.get('image', instance.image)
+        instance.description = validated_data.get('description', instance.description)
+        instance.price = validated_data.get('price', instance.price)
+        instance.weight = validated_data.get('weight', instance.weight)
+        instance.country = validated_data.get('country', instance.country)
+        instance.out_of_stock = validated_data.get('out_of_stock', instance.out_of_stock)
+        instance.category1 = validated_data.get('category1', instance.category1)
+        instance.category2 = validated_data.get('category2', instance.category2)
+
+        instance.save()
+        return instance
+
 
 
 
