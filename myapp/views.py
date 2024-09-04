@@ -23,7 +23,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
 from .forms import ContactForm , TestimonialForm ,SubscribeForm, UserRegistrationForm , BillingDetailForm
-from .models import Products,Category1,Category2,Subscriber ,BillingDetail,Feature ,Coupon, Discount , Facts , Banner , Testimonial , CartItem
+from .models import Products,Category1,Subscriber ,BillingDetail,Feature ,Coupon, Discount , Facts , Banner , Testimonial , CartItem
 
 logger = logging.getLogger(__name__)
 
@@ -56,29 +56,7 @@ def index(request):
         products = products.filter(name__icontains=query)
 
     # Limit the number of products displayed
-    products = products[4:12]  # Adjust the slice as needed
-
-    # Fetch products based on fixed categories (e.g., Vegetables and Fruits)
-    vegetable_category = Category1.objects.filter(name='Vegetables').first()
-    fruit_category = Category1.objects.filter(name='Fruits').first()
-
-    if vegetable_category:
-        vegetable_products = Products.objects.filter(category1=vegetable_category)
-        if query:
-            vegetable_products = vegetable_products.filter(name__icontains=query)[:7]
-        else:
-            vegetable_products = vegetable_products[:7]
-    else:
-        vegetable_products = Products.objects.none()  # No vegetables found
-
-    if fruit_category:
-        fruit_products = Products.objects.filter(category1=fruit_category)
-        if query:
-            fruit_products = fruit_products.filter(name__icontains=query)[:7]
-        else:
-            fruit_products = fruit_products[:7]
-    else:
-        fruit_products = Products.objects.none()  # No fruits found
+    products = products[4:12]  # Display the first 12 products
 
     return render(request, 'index.html', {
         'products': products,
@@ -89,10 +67,9 @@ def index(request):
         'facts': facts,
         'banners': banners,
         'reviews': reviews,
-        'vegetables': vegetable_products,
-        'fruits': fruit_products,
         'query': query
     })
+
 
 
 
@@ -544,17 +521,21 @@ def render_to_pdf(html_content):
 class ProductListView(generics.ListCreateAPIView):
     queryset = Products.objects.all()
     serializer_class = ProductSerializer
+    permission_classes = [IsAdminUser]
 
 class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Products.objects.all()
     serializer_class = ProductSerializer
+    permission_classes = [IsAdminUser]
 
 class BillingDetailView(generics.ListCreateAPIView):
     queryset = BillingDetail.objects.all()
     serializer_class = BillingSerializer
+    permission_classes = [IsAdminUser]
     
 class BillingDetailListView(generics.RetrieveUpdateDestroyAPIView):
     queryset = BillingDetail.objects.all()
     serializer_class = BillingSerializer
+    permission_classes = [IsAdminUser]
   
 
