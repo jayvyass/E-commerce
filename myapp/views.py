@@ -591,7 +591,7 @@ class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response(
-            {"message": "Product Deleted Successfully","status":"success" , "status_code": status.HTTP_204_NO_CONTENT},
+            {"message": "Product Deleted Successfully","status":"No Content" , "status_code": status.HTTP_204_NO_CONTENT},
             status=status.HTTP_204_NO_CONTENT
         )
 
@@ -667,6 +667,6 @@ class BillingDetailListView(generics.RetrieveUpdateDestroyAPIView):
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response(
-            {"message": "Billing Details Deleted Successfully","status":"success" , "status_code": status.HTTP_204_NO_CONTENT},
+            {"message": "Billing Details Deleted Successfully","status":"No Content" , "status_code": status.HTTP_204_NO_CONTENT},
             status=status.HTTP_204_NO_CONTENT
         )
