@@ -17,6 +17,8 @@ from rest_framework import generics
 from .serializers import ProductSerializer , BillingSerializer
 from .decorators import unauthenticated_user
 from rest_framework.permissions import IsAdminUser
+from rest_framework.response import Response
+from rest_framework import status
 
 from .forms import ContactForm , TestimonialForm ,SubscribeForm, UserRegistrationForm , BillingDetailForm
 from .models import Products,Category1,Subscriber ,BillingDetail,Feature ,Coupon, Discount , Facts , Banner , Testimonial , CartItem
@@ -514,24 +516,157 @@ def render_to_pdf(html_content):
     return result.getvalue()
 
 # API 
+def custom_response(data=None, message='Success', status_code=status.HTTP_200_OK):
+    return Response({
+        'status': status_code,
+        'message': message,
+        'data': data
+    }, status=status_code)
+
 class ProductListView(generics.ListCreateAPIView):
     queryset = Products.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [IsAdminUser]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            # Custom success response
+            return Response(
+                {"message": "Product Created Successfully", "status_code": status.HTTP_201_CREATED},
+                status=status.HTTP_201_CREATED,
+                headers=headers
+            )
+        return Response(
+            {
+                "message": "Validation error",
+                "status_code": status.HTTP_400_BAD_REQUEST,
+                "errors": serializer.errors
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
 class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Products.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [IsAdminUser]
 
+    def put(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=False)
+        if serializer.is_valid():
+            self.perform_update(serializer)
+            return Response(
+                {"message": "Product Details Updated Successfully", "status_code": status.HTTP_200_OK},
+                status=status.HTTP_200_OK
+            )
+        return Response(
+            {
+                "message": "Validation error",
+                "status_code": status.HTTP_400_BAD_REQUEST,
+                "errors": serializer.errors
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    def patch(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            self.perform_update(serializer)
+            return Response(
+                {"message": "Product Details Partially Updated Successfully", "status_code": status.HTTP_200_OK},
+                status=status.HTTP_200_OK
+            )
+        return Response(
+            {
+                "message": "Validation error",
+                "status_code": status.HTTP_400_BAD_REQUEST,
+                "errors": serializer.errors
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(
+            {"message": "Product Details Deleted Successfully", "status_code": status.HTTP_204_NO_CONTENT},
+            status=status.HTTP_204_NO_CONTENT
+        )
+
 class BillingDetailView(generics.ListCreateAPIView):
     queryset = BillingDetail.objects.all()
     serializer_class = BillingSerializer
     permission_classes = [IsAdminUser]
+    
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            # Custom success response
+            return Response(
+                {"message": "Billing Deatils Created Successfully", "status_code": status.HTTP_201_CREATED},
+                status=status.HTTP_201_CREATED,
+                headers=headers
+            )
+        return Response(
+            {
+                "message": "Validation error",
+                "status_code": status.HTTP_400_BAD_REQUEST,
+                "errors": serializer.errors
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
     
 class BillingDetailListView(generics.RetrieveUpdateDestroyAPIView):
     queryset = BillingDetail.objects.all()
     serializer_class = BillingSerializer
     permission_classes = [IsAdminUser]
   
+    def put(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=False)
+        if serializer.is_valid():
+            self.perform_update(serializer)
+            return Response(
+                {"message": "Billing Details Updated Successfully", "status_code": status.HTTP_200_OK},
+                status=status.HTTP_200_OK
+            )
+        return Response(
+            {
+                "message": "Validation error",
+                "status_code": status.HTTP_400_BAD_REQUEST,
+                "errors": serializer.errors
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
+    def patch(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            self.perform_update(serializer)
+            return Response(
+                {"message": "Billing Details Partially Updated Successfully", "status_code": status.HTTP_200_OK},
+                status=status.HTTP_200_OK
+            )
+        return Response(
+            {
+                "message": "Validation error",
+                "status_code": status.HTTP_400_BAD_REQUEST,
+                "errors": serializer.errors
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(
+            {"message": "Billing Details Deleted Successfully", "status_code": status.HTTP_204_NO_CONTENT},
+            status=status.HTTP_204_NO_CONTENT
+        )

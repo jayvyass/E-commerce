@@ -181,7 +181,7 @@ class CouponAdmin(admin.ModelAdmin):
 
 @admin.register(BillingDetail)
 class BillingAdmin(admin.ModelAdmin):
-    list_display = ('user','subtotal','discount','total', 'country')
+    list_display = ('id','user','subtotal','discount','total', 'country')
     actions = [export_billing_csv] 
     list_filter = (BillingDateFilter,  TotalAmountFilter) 
     

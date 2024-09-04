@@ -161,3 +161,12 @@ DEFAULT_FROM_EMAIL = 'jayvyas0802@gmail.com'
 #         'rest_framework.renderers.JSONRenderer',
 #     ]
 # }
+
+# settings.py
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
+

@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
- 
+from rest_framework.authtoken.views import obtain_auth_token 
 
 urlpatterns = [
     path('', views.index , name='index'),
@@ -29,6 +29,5 @@ urlpatterns = [
     path('api/billing/', views.BillingDetailView.as_view(), name='Billing-list'),
     path('api/products/<int:pk>/', views.ProductDetailView.as_view(), name='products-detail'),
     path('api/billing/<int:pk>/', views.BillingDetailListView.as_view(), name='Billing-detail'),
-
 ]
 handler404 = 'myapp.views.error'

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Products , BillingDetail, Category1 ,Category2
-
+from rest_framework.response import Response
+from rest_framework import status
 
 class BillingSerializer(serializers.ModelSerializer):
     class Meta:
@@ -74,8 +75,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
-
-
+    
 
 
 
