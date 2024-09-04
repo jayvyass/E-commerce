@@ -516,12 +516,7 @@ def render_to_pdf(html_content):
     return result.getvalue()
 
 # API 
-def custom_response(data=None, message='Success', status_code=status.HTTP_200_OK):
-    return Response({
-        'status': status_code,
-        'message': message,
-        'data': data
-    }, status=status_code)
+
 
 class ProductListView(generics.ListCreateAPIView):
     queryset = Products.objects.all()
@@ -535,13 +530,14 @@ class ProductListView(generics.ListCreateAPIView):
             headers = self.get_success_headers(serializer.data)
             # Custom success response
             return Response(
-                {"message": "Product Created Successfully", "status_code": status.HTTP_201_CREATED},
+                {"message": "Product Created Successfully","status":"Created" , "status_code": status.HTTP_201_CREATED},
                 status=status.HTTP_201_CREATED,
                 headers=headers
             )
         return Response(
             {
                 "message": "Validation error",
+                "status":"Bad Request",
                 "status_code": status.HTTP_400_BAD_REQUEST,
                 "errors": serializer.errors
             },
@@ -559,12 +555,13 @@ class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
         if serializer.is_valid():
             self.perform_update(serializer)
             return Response(
-                {"message": "Product Details Updated Successfully", "status_code": status.HTTP_200_OK},
+                {"message": "Product Details Updated Successfully","status":"success", "status_code": status.HTTP_200_OK},
                 status=status.HTTP_200_OK
             )
         return Response(
             {
                 "message": "Validation error",
+                "status":"Bad Request",
                 "status_code": status.HTTP_400_BAD_REQUEST,
                 "errors": serializer.errors
             },
@@ -577,12 +574,13 @@ class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
         if serializer.is_valid():
             self.perform_update(serializer)
             return Response(
-                {"message": "Product Details Partially Updated Successfully", "status_code": status.HTTP_200_OK},
+                {"message": "Product Details Partially Updated Successfully","status":"success" , "status_code": status.HTTP_200_OK},
                 status=status.HTTP_200_OK
             )
         return Response(
             {
                 "message": "Validation error",
+                "status":"Bad Request",
                 "status_code": status.HTTP_400_BAD_REQUEST,
                 "errors": serializer.errors
             },
@@ -593,7 +591,7 @@ class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response(
-            {"message": "Product Details Deleted Successfully", "status_code": status.HTTP_204_NO_CONTENT},
+            {"message": "Product Deleted Successfully","status":"success" , "status_code": status.HTTP_204_NO_CONTENT},
             status=status.HTTP_204_NO_CONTENT
         )
 
@@ -609,13 +607,14 @@ class BillingDetailView(generics.ListCreateAPIView):
             headers = self.get_success_headers(serializer.data)
             # Custom success response
             return Response(
-                {"message": "Billing Deatils Created Successfully", "status_code": status.HTTP_201_CREATED},
+                {"message": "Billing Deatils Created Successfully","status":"Created" , "status_code": status.HTTP_201_CREATED},
                 status=status.HTTP_201_CREATED,
                 headers=headers
             )
         return Response(
             {
                 "message": "Validation error",
+                "status": "Bad Request",
                 "status_code": status.HTTP_400_BAD_REQUEST,
                 "errors": serializer.errors
             },
@@ -633,12 +632,13 @@ class BillingDetailListView(generics.RetrieveUpdateDestroyAPIView):
         if serializer.is_valid():
             self.perform_update(serializer)
             return Response(
-                {"message": "Billing Details Updated Successfully", "status_code": status.HTTP_200_OK},
+                {"message": "Billing Details Updated Successfully","status":"success" ,"status_code": status.HTTP_200_OK},
                 status=status.HTTP_200_OK
             )
         return Response(
             {
                 "message": "Validation error",
+                "status": "Bad Request",
                 "status_code": status.HTTP_400_BAD_REQUEST,
                 "errors": serializer.errors
             },
@@ -651,7 +651,7 @@ class BillingDetailListView(generics.RetrieveUpdateDestroyAPIView):
         if serializer.is_valid():
             self.perform_update(serializer)
             return Response(
-                {"message": "Billing Details Partially Updated Successfully", "status_code": status.HTTP_200_OK},
+                {"message": "Billing Details Partially Updated Successfully", "status":"success" ,"status_code": status.HTTP_200_OK},
                 status=status.HTTP_200_OK
             )
         return Response(
@@ -667,6 +667,6 @@ class BillingDetailListView(generics.RetrieveUpdateDestroyAPIView):
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response(
-            {"message": "Billing Details Deleted Successfully", "status_code": status.HTTP_204_NO_CONTENT},
+            {"message": "Billing Details Deleted Successfully","status":"success" , "status_code": status.HTTP_204_NO_CONTENT},
             status=status.HTTP_204_NO_CONTENT
         )
