@@ -5,22 +5,18 @@ from decimal import Decimal
 from django.http import JsonResponse 
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
-import json
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.mail import send_mail , EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
-import logging
+import logging ,json
 from io import BytesIO
 from xhtml2pdf import pisa
 from rest_framework import generics
 from .serializers import ProductSerializer , BillingSerializer
 from .decorators import unauthenticated_user
 from rest_framework.permissions import IsAdminUser
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
 
 from .forms import ContactForm , TestimonialForm ,SubscribeForm, UserRegistrationForm , BillingDetailForm
 from .models import Products,Category1,Subscriber ,BillingDetail,Feature ,Coupon, Discount , Facts , Banner , Testimonial , CartItem
