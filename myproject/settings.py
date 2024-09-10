@@ -42,6 +42,10 @@ INSTALLED_APPS = [
     'theme',
     'django_browser_reload',
     'rest_framework',
+#     'allauth',
+#     'allauth.account',
+#     'allauth.socialaccount',
+#     'allauth.socialaccount.providers.google',
 ]
 
 TAILWIND_APP_NAME = 'theme'
@@ -57,6 +61,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_browser_reload.middleware.BrowserReloadMiddleware',
+    # 'allauth.account.middleware.AccountMiddleware'
 ]
 
 ROOT_URLCONF = 'myproject.urls'
@@ -73,7 +78,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'myapp.context_processors.cart_item_count',
-                'myapp.context_processors.global_context'
+                'myapp.context_processors.global_context',
+                
             ],
         },
     },
@@ -170,4 +176,27 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ],
 }
+
+# SITE_ID = 1
+
+# # Redirect URLs after login/logout
+# LOGIN_REDIRECT_URL = '/'
+# LOGOUT_REDIRECT_URL = '/'
+
+# # Authentication backends
+# AUTHENTICATION_BACKENDS = {
+#     'django.contrib.auth.backends.ModelBackend',
+#     'allauth.account.auth_backends.AuthenticationBackend',
+# }
+
+# SOCIALACCOUNT_PROVIDERS = {
+#     'google': {
+#         'APP': {
+#             'client_id': '68037531351-11gd5k1ic8s29ffoib5pqrqcpcsr5qge.apps.googleusercontent.com',
+#             'secret': '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',
+
+#         },
+#         'REDIRECT_URI': 'http://127.0.0.1:8000/social-auth/complete/google-oauth2/',
+#     }
+# }
 

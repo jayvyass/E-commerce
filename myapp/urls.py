@@ -24,6 +24,7 @@ urlpatterns = [
     path('search/', views.search_results, name='search_results'),
     path('404/', views.error, name='error'),
 
+
     # API
     path('api/products/', views.ProductListView.as_view(), name='product-list'),
     path('api/billing/', views.BillingDetailView.as_view(), name='Billing-list'),
