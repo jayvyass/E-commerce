@@ -20,22 +20,39 @@
     }
     {% comment %} for selecting  stars for testimonial {% endcomment %}
        
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         const gridViewButton = document.getElementById('grid-view');
         const listViewButton = document.getElementById('list-view');
         const gridContainer = document.getElementById('grid-container');
         const listContainer = document.getElementById('list-container');
-    
-        gridViewButton.addEventListener('click', function () {
-            gridContainer.style.display = 'block';
-            listContainer.style.display = 'none';
+        
+        // Load view preference from localStorage
+        const savedView = localStorage.getItem('viewMode') || 'grid';  // Default to grid if no preference is saved
+        applyView(savedView);
+        
+        // Event listener for Grid View button
+        gridViewButton.addEventListener('click', function() {
+            localStorage.setItem('viewMode', 'grid');
+            applyView('grid');
         });
-    
-        listViewButton.addEventListener('click', function () {
-            gridContainer.style.display = 'none';
-            listContainer.style.display = 'block';
-            $('#product-list-table').DataTable(); // Initialize DataTables
+
+        // Event listener for List View button
+        listViewButton.addEventListener('click', function() {
+            localStorage.setItem('viewMode', 'list');
+            applyView('list');
         });
+
+        // Function to apply the view based on mode
+        function applyView(mode) {
+            if (mode === 'grid') {
+                gridContainer.style.display = 'block';
+                listContainer.style.display = 'none';
+            } else if (mode === 'list') {
+                gridContainer.style.display = 'none';
+                listContainer.style.display = 'block';
+                $('#product-list-table').DataTable();
+            }
+        }
     });
        
 </script>

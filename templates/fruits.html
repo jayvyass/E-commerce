@@ -68,19 +68,25 @@
             </tr>
         </thead>
         <tbody>
-            {% for product in fruit_products %}
-            <tr>
-                <td class="text-center"><img src="{{ product.image.url }}" alt="{{ product.name }}"></td>
-                <td class="text-center">{{ product.name }}</td>
-                <td class="text-center">{{ product.description }}</td>
-                <td class="text-center">${{ product.price }} /{{ product.weight }}</td>
-                <td class="text-center">
-                    <a href="{% url 'product-detail' product.product_id %}" class="btn border border-secondary rounded-pill px-3 text-primary">
-                        <i class="fa fa-plus-circle me-2 text-primary"></i> View More
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
+            {% if fruit_products %}
+                {% for product in fruit_products %}
+                <tr>
+                    <td class="text-center"><img src="{{ product.image.url }}" alt="{{ product.name }}"></td>
+                    <td class="text-center">{{ product.name }}</td>
+                    <td class="text-center">{{ product.description }}</td>
+                    <td class="text-center">${{ product.price }} /{{ product.weight }}</td>
+                    <td class="text-center">
+                        <a href="{% url 'product-detail' product.product_id %}" class="btn border border-secondary rounded-pill px-3 text-primary">
+                            <i class="fa fa-plus-circle me-2 text-primary"></i> View More
+                        </a>
+                    </td>
+                </tr>
+                    {% empty %}
+                    <p>No Fruits Available.</p>
+                {% endfor %}
+            {% else %}
+            <p>No Fruits found for "{{ search_query }}"</p>
+            {% endif %}
         </tbody>
     </table>
 </div>
