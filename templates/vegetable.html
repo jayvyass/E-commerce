@@ -8,7 +8,6 @@
     <h1 class="text-center text-white display-6">Vegatables</h1>
     <ol class="breadcrumb justify-content-center mb-0">
         <li class="breadcrumb-item"><a href="#">Home</a></li>
-        <li class="breadcrumb-item"><a href="#">Pages</a></li>
         <li class="breadcrumb-item active text-white">Vegatables</li>
     </ol>
 </div>
@@ -61,21 +60,21 @@
     <table id="product-list-table" class="display">
         <thead>
             <tr>
-                <th class="text-center">Image</th>
-                <th class="text-center">Name</th>
-                <th class="text-center">Description</th>
-                <th class="text-center">Price</th>
-                <th class="text-center">Actions</th>
+                <th class="text-center" style="color: black;">Image</th>
+                <th class="text-center" style="color: black;">Name</th>
+                <th class="text-center" style="color: black;">Description</th>
+                <th class="text-center" style="color: black;">Price</th>
+                <th class="text-center" style="color: black;">Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for product in vegetable_products %}
             <tr>
                 <td class="text-center"><img src="{{ product.image.url }}" alt="{{ product.name }}"></td>
-                <td class="text-center">{{ product.name }}</td>
-                <td class="text-center">{{ product.description }}</td>
-                <td class="text-center">${{ product.price }} /{{ product.weight }}</td>
-                <td class="text-center">
+                <td class="text-center" style="color: black;">{{ product.name }}</td>
+                <td class="text-center" style="color: black;">{{ product.description }}</td>
+                <td class="text-center" style="color: black;">${{ product.price }} /{{ product.weight }}</td>
+                <td class="text-center" style="color: black;">
                     <a href="{% url 'product-detail' product.product_id %}" class="btn border border-secondary rounded-pill px-3 text-primary">
                         <i class="fa fa-plus-circle me-2 text-primary"></i> View More
                     </a>
