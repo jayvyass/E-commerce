@@ -140,7 +140,6 @@ def add_to_cart(request, product_id):
     return redirect('cart')
 
 
-
 @login_required(login_url='login')
 @csrf_exempt
 def update_cart_quantity(request):
@@ -517,7 +516,6 @@ def render_to_pdf(html_content):
     return result.getvalue()
 
 # API 
-
 
 class ProductListView(generics.ListCreateAPIView):
     queryset = Products.objects.all()

@@ -29,10 +29,10 @@ margin-left: 30px;
 margin-bottom: 30px;
 margin-top: 20px;
 padding: 60px;
-box-sizing: border-box; /* Ensure padding is included in the width */
-background-color: #f9f9f9; /* Light background for the list container */
-border-radius: 10px; /* Slight rounding for a cleaner look */
-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+box-sizing: border-box; 
+background-color: #f9f9f9; 
+border-radius: 10px; 
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
 }
 
 .product-list {
@@ -47,7 +47,7 @@ box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
 #product-list-table {
     width: 100%;
     border-collapse: collapse;
-    border: 2px solid #fd7e14; /* Orange border for the entire table */
+    border: 2px solid #81C408; 
 }
 
 #product-list-table th, 
