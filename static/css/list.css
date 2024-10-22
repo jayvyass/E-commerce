@@ -47,24 +47,39 @@ box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 #product-list-table {
     width: 100%;
     border-collapse: collapse;
-    border: 2px solid #81C408; 
+    border: 2px solid #81C408; /* Outer border of the table */
 }
 
 #product-list-table th, 
 #product-list-table td {
-    padding: 15px; 
-    border: 1px solid #81C408; 
+    padding: 15px;
     text-align: center;
     vertical-align: middle;
     color: #333; 
-    font-size: 1rem; 
+    font-size: 1rem;
+    border-left: none; /* Remove vertical lines */
+    border-right: none; /* Remove vertical lines */
+}
+
+#product-list-table th:first-child, 
+#product-list-table td:first-child {
+    border-right: 1px solid #81C408; 
 }
 
 #product-list-table th {
-    /* background-color: #fd7e14; Orange background for header */
-    color: white; 
+    color: white;
     font-weight: bold;
-    text-transform: uppercase; 
+    text-transform: uppercase;
+    border-bottom: 1px solid #81C408; 
+}
+
+#product-list-table td {
+    border-bottom: 1px solid #81C408;
+}
+
+#product-list-table tr:hover {
+    background-color: #f4f4f4; /* Light grey background on hover */
+    transition: background-color 0.3s ease;
 }
 
 #product-list-table td img {
@@ -72,11 +87,6 @@ box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     height: 100px; /* Set height for images */
     object-fit: cover; /* Ensure image is cropped correctly */
     border-radius: 8px; /* Round the image corners slightly */
-}
-
-#product-list-table tr:hover {
-    background-color: #f4f4f4; /* Light grey background on hover */
-    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
 }
 
 .view-icon {
